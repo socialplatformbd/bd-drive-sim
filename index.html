@@ -180,23 +180,19 @@ const toLL=(x,z)=>[O.lat-z/O.ky,O.lon+x/O.kx];
 const HW={motorway:7,trunk:6,primary:5.5,secondary:4.5,tertiary:4,unclassified:3.3,residential:3,motorway_link:3.5,trunk_link:3.5,primary_link:3.5,secondary_link:3.5,tertiary_link:3.2};
 const BCOL=[0xd9b99b,0xc97b63,0xe8d5a9,0x8fb8c9,0xb5a3c9];
 
-let lastErr='',areaTok=0,Wb=null;
-async function ov(q){
-const hs=['https://overpass-api.de/api/interpreter','https://overpass.private.coffee/api/interpreter','https://overpass.kumi.systems/api/interpreter'];
-for(const h of hs){
+async function fetchOSM(lat,lon){
+const a=lat.toFixed(5),b=lon.toFixed(5);
+const q='[out:json][timeout:25];(way["highway"~"^('+Object.keys(HW).join('|')+')$"](around:1200,'+a+','+b+');way["building"](around:450,'+a+','+b+'););out geom;';
+for(const h of['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter']){
 try{
-const ac=new AbortController();const tm=setTimeout(()=>ac.abort(),15000);
+const ac=new AbortController();const tm=setTimeout(()=>ac.abort(),30000);
 const r=await fetch(h,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ac.signal});
 clearTimeout(tm);
 if(r.ok){const j=await r.json();return j.elements||[];}
-lastErr=h.split('/')[2]+' '+r.status;
-}catch(e){lastErr=h.split('/')[2]+' '+(e.name==='AbortError'?'timeout':'network');}
+}catch(e){}
 }
-throw new Error(lastErr);
+throw new Error('osm');
 }
-const HWR='^('+Object.keys(HW).join('|')+')$';
-const qRoads=(a,b,r)=>'[out:json][timeout:20];way["highway"~"'+HWR+'"](around:'+r+','+a.toFixed(5)+','+b.toFixed(5)+');out geom;';
-const qBld=(a,b,r)=>'[out:json][timeout:20];way["building"](around:'+r+','+a.toFixed(5)+','+b.toFixed(5)+');out geom 300;';
 function ribbon(p,hw,a,y){
 const L=[];
 for(let i=0;i<p.length;i++){
@@ -257,8 +253,8 @@ if(dp.length)g.add(mk(dp,0xffffff,-2));
 return{g:g,S:S,nm:nm};
 }
 function install(r){
-for(const o of[W,Wb]){if(o){scene.remove(o);o.traverse(x=>{if(x.geometry)x.geometry.dispose();});}}
-Wb=null;W=r.g;scene.add(W);segs=r.S;names=r.nm;
+if(W){scene.remove(W);W.traverse(o=>{if(o.geometry)o.geometry.dispose();});}
+W=r.g;scene.add(W);segs=r.S;names=r.nm;
 }
 function nearest(x,z){
 let bi=-1,bd=1e18;
@@ -285,9 +281,9 @@ $('pl').textContent=[...new Set([a.suburb||a.village||a.town||a.city,a.county,a.
 }
 async function loadArea(lat,lon,sp){
 if(loading)return;
-loading=true;const tok=++areaTok;say(t(sp?'load':'nw'),90000);
+loading=true;say(t(sp?'load':'nw'),90000);
 try{
-const els=await ov(qRoads(lat,lon,900));
+const els=await fetchOSM(lat,lon);
 const ll=sp?null:toLL(P.position.x,P.position.z);
 setO(lat,lon);
 const res=build(els);
@@ -295,13 +291,7 @@ if(sp&&!res.S.length){loading=false;say(t('none'),5000);back(true);return;}
 install(res);
 if(sp)spawn();else{const q=toXZ(ll[0],ll[1]);P.position.x=q[0];P.position.z=q[1];}
 hide();geo(lat,lon);
-ov(qBld(lat,lon,300)).then(e2=>{
-if(tok!==areaTok)return;
-const r2=build(e2);
-if(Wb){scene.remove(Wb);Wb.traverse(o=>{if(o.geometry)o.geometry.dispose();});}
-Wb=r2.g;scene.add(Wb);
-}).catch(()=>{});
-}catch(e){say(t('err')+' ['+(e.message||'')+']',9000);if(sp)back(true);else retryAt=performance.now()+15000;}
+}catch(e){say(t('err'),5000);if(sp)back(true);else retryAt=performance.now()+15000;}
 loading=false;
 }
 
@@ -356,7 +346,7 @@ const i=nearest(P.position.x,P.position.z);
 off=(i<0)||nd>segs[i][4]+1.5;
 if(i>=0&&!off){const n=names[segs[i][5]];$('rd').textContent=n[lang==='bn'?0:1]||n[0]||n[1]||t('noname');}
 }
-if(!loading&&performance.now()>retryAt&&Math.hypot(P.position.x,P.position.z)>450){
+if(!loading&&performance.now()>retryAt&&Math.hypot(P.position.x,P.position.z)>600){
 const ll=toLL(P.position.x,P.position.z);loadArea(ll[0],ll[1],false);
 }
 
