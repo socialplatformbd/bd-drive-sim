@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BD Drive Sim</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--hud:rgba(10,16,28,.74);--fg:#fff;--on:#22c55e}
+html,body{height:100%;margin:0;background:#0b1220;overflow:hidden;font-family:"Noto Sans Bengali","Hind Siliguri",system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+#map{position:fixed;inset:0;z-index:0}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:none;z-index:0;touch-action:none}
+body.play #cv{display:block}
+body.play .mo{display:none}
+body:not(.play) .go{display:none!important}
+button{font:inherit;font-size:13px;background:var(--hud);color:var(--fg);border:2px solid transparent;border-radius:10px;padding:9px 12px}
+.ui{position:fixed;z-index:2000;color:var(--fg);background:var(--hud);border-radius:12px;padding:6px 12px;font-size:13px;line-height:1.4}
+#bar{position:fixed;z-index:2000;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;right:8px;display:flex;gap:6px}
+#q{flex:1;min-width:0;padding:10px;border-radius:10px;border:0;font:inherit;font-size:14px;background:#fff;color:#111}
+#res{position:fixed;z-index:2000;top:calc(env(safe-area-inset-top,0px) + 60px);left:8px;right:8px}
+#res button{display:block;width:100%;text-align:left;margin-top:4px;background:#fff;color:#111}
+#cross{position:fixed;z-index:2000;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid #e11d48;border-radius:50%;box-sizing:border-box;pointer-events:none}
+#vbar{position:fixed;z-index:2000;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);left:8px;right:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.vb.act{border-color:var(--on)}
+#drv{background:#16a34a;font-weight:700}
+#attr{position:fixed;z-index:2000;bottom:calc(env(safe-area-inset-bottom,0px) + 4px);left:8px;font-size:10px;background:rgba(255,255,255,.85);color:#222;padding:1px 6px;border-radius:6px}
+#info{top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;max-width:48%}
+#spd{font-size:30px;font-weight:700}
+#tr{position:fixed;z-index:2000;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:50%}
+#toast{top:calc(env(safe-area-inset-top,0px) + 112px);left:50%;transform:translateX(-50%);opacity:0;transition:opacity .4s;pointer-events:none;text-align:center;width:max-content;max-width:86%}
+#toast.show{opacity:1}
+.pad{position:fixed;z-index:2000;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;gap:14px}
+#lc{left:16px}#rc{right:16px}
+.pad button{width:78px;height:78px;border-radius:50%;border:2px solid rgba(255,255,255,.35);font-size:16px;font-weight:700;touch-action:none}
+.pad button.on{background:var(--on);color:#06210f}
+#bk{background:rgba(190,30,30,.65)}
+#bk.on{background:#ef4444;color:#fff}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<canvas id="cv"></canvas>
+
+<div id="bar" class="mo"><input id="q" type="search"><button id="sbtn" data-i="find"></button><button id="lang"></button></div>
+<div id="res" class="mo"></div>
+<div id="cross" class="mo"></div>
+<div id="vbar" class="mo"><button class="vb" data-v="bus" data-i="bus"></button><button class="vb" data-v="truck" data-i="truck"></button><button class="vb" data-v="bike" data-i="bike"></button><button id="drv" data-i="drive"></button></div>
+<div id="attr" class="mo">© OpenStreetMap contributors</div>
+
+<div id="info" class="ui go"><span id="spd">0</span> <span data-i="kmh"></span><br><b id="rd"></b><br><span id="pl"></span></div>
+<div id="tr" class="go"><button id="mapbtn" data-i="map"></button><button id="cam"></button><button id="lang2"></button></div>
+<div id="toast" class="ui"></div>
+<div id="lc" class="pad go"><button id="bl">◀</button><button id="br">▶</button></div>
+<div id="rc" class="pad go"><button id="bk" data-i="brk"></button><button id="gs" data-i="gas"></button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const toast=$('toast');let tt=null;
+const say=(m,ms)=>{toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),ms||3500);};
+const hide=()=>{clearTimeout(tt);toast.classList.remove('show');};
+if(typeof THREE==='undefined'||typeof L==='undefined'){say('লাইব্রেরি লোড হয়নি, ইন্টারনেট চেক করে রিলোড করুন / Library failed to load, check internet and reload',60000);return;}
+
+/* ---------- ভাষা / Language ---------- */
+const T={
+bn:{ph:'জেলা, উপজেলা বা জায়গা খুঁজুন',find:'খুঁজুন',drive:'🚗 এখানে চালাও',bus:'🚌 বাস',truck:'🚚 ট্রাক',bike:'🏍️ বাইক',load:'রাস্তা লোড হচ্ছে…',nw:'নতুন এলাকা লোড হচ্ছে…',none:'এখানে রাস্তার ডেটা নেই, অন্য জায়গা বেছে নিন',err:'ডেটা আনা যায়নি, ইন্টারনেট চেক করুন',gas:'গ্যাস ▲',brk:'ব্রেক',ci:'ককপিট',co:'বাইরে',map:'🗺️ ম্যাপ',kmh:'কিমি/ঘণ্টা',noname:'নামহীন রাস্তা',hint:'ম্যাপ সরিয়ে লাল বৃত্তটি যেখানে চালাতে চান সেখানে আনুন, তারপর “এখানে চালাও” চাপুন',nores:'কিছু পাওয়া যায়নি'},
+en:{ph:'Search district, upazila or place',find:'Search',drive:'🚗 Drive here',bus:'🚌 Bus',truck:'🚚 Truck',bike:'🏍️ Bike',load:'Loading roads…',nw:'Loading new area…',none:'No road data here, pick another place',err:'Could not load data, check your internet',gas:'Gas ▲',brk:'Brake',ci:'Cockpit',co:'Outside',map:'🗺️ Map',kmh:'km/h',noname:'Unnamed road',hint:'Move the map so the red circle is where you want to drive, then tap “Drive here”',nores:'Nothing found'}
+};
+let lang='bn';try{lang=localStorage.getItem('lang')||'bn';}catch(e){}
+if(!T[lang])lang='bn';
+const t=k=>T[lang][k];
+let camMode='out';
+function applyLang(){
+document.documentElement.lang=lang;
+document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});
+$('q').placeholder=t('ph');
+$('lang').textContent=$('lang2').textContent=(lang==='bn'?'English':'বাংলা');
+$('cam').textContent='📷 '+t(camMode==='in'?'ci':'co');
+}
+function toggleLang(){lang=(lang==='bn'?'en':'bn');try{localStorage.setItem('lang',lang);}catch(e){}applyLang();}
+$('lang').onclick=$('lang2').onclick=toggleLang;
+
+/* ---------- ম্যাপ / Map ---------- */
+const map=L.map('map',{zoomControl:false,attributionControl:false,minZoom:7,maxBounds:[[20.3,87.8],[26.9,93]],maxBoundsViscosity:1}).setView([23.8103,90.4125],11);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+async function search(){
+const q=$('q').value.trim();if(!q)return;
+const r=$('res');r.innerHTML='';
+try{
+const u='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=bd&accept-language='+lang+'&q='+encodeURIComponent(q);
+const a=await (await fetch(u)).json();
+if(!a.length){say(t('nores'));return;}
+a.forEach(p=>{const b=document.createElement('button');b.textContent=p.display_name.split(',').slice(0,3).join(',');b.onclick=()=>{map.setView([+p.lat,+p.lon],14);r.innerHTML='';};r.appendChild(b);});
+}catch(e){say(t('err'),4000);}
+}
+$('sbtn').onclick=search;
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')search();});
+
+/* ---------- 3D সেটআপ ---------- */
+const renderer=new THREE.WebGLRenderer({canvas:$('cv'),antialias:false,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth,window.innerHeight,false);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x9fd3f0);
+scene.fog=new THREE.Fog(0x9fd3f0,60,330);
+const camera=new THREE.PerspectiveCamera(68,window.innerWidth/window.innerHeight,0.2,500);
+scene.add(camera);
+scene.add(new THREE.HemisphereLight(0xffffff,0x4a6b3a,0.95));
+const sun=new THREE.DirectionalLight(0xffffff,0.6);sun.position.set(30,60,20);scene.add(sun);
+const MATS={};
+const mat=c=>MATS[c]||(MATS[c]=new THREE.MeshLambertMaterial({color:c}));
+const BM=new THREE.MeshLambertMaterial({color:0xd9b99b,side:THREE.DoubleSide});
+function box(w,h,d,c,x,y,z,p){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);p.add(m);return m;}
+function wheel(r,w,x,y,z,p){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,w,12),mat(0x111111));m.rotation.z=Math.PI/2;m.position.set(x,y,z);p.add(m);}
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(6000,6000),mat(0x6f9f58));ground.rotation.x=-Math.PI/2;scene.add(ground);
+
+/* ---------- গাড়ি / Vehicles ---------- */
+const V={
+bus:{max:24,acc:5,turn:.75,o:[0,6.5,15],look:[1.5,-14],c:[.75,2.7,-3.8]},
+truck:{max:21,acc:4,turn:.65,o:[0,5.6,13],look:[1.5,-14],c:[.6,2.5,-2.4]},
+bike:{max:32,acc:9,turn:1.2,o:[0,2.6,6],look:[1,-12],c:[0,1.45,-.2]}
+};
+function buildModel(k){
+const g=new THREE.Group();
+if(k==='bus'){
+box(2.6,2.6,10,0x1e8e3e,0,1.9,0,g);box(2.62,.9,9.4,0x9fd8f0,0,2.5,0,g);box(2.2,1,.05,0x9fd8f0,0,2.4,-5.03,g);
+box(2.62,.25,10.02,0xffd54f,0,1.2,0,g);box(.4,.3,.05,0xfff3b0,-.9,1.2,-5.03,g);box(.4,.3,.05,0xfff3b0,.9,1.2,-5.03,g);
+for(const x of[-1.3,1.3])for(const z of[-3.2,3.2])wheel(.55,.4,x,.55,z,g);
+}else if(k==='truck'){
+box(2.3,.5,8,0x222222,0,.8,0,g);box(2.5,2.4,2.6,0xc62828,0,1.9,-2.7,g);box(2.2,.9,.05,0x9fd8f0,0,2.4,-4.02,g);
+box(2.5,2.4,5.2,0x1565c0,0,2.1,1.5,g);box(2.52,.25,5.2,0xffd54f,0,1.4,1.5,g);
+box(.4,.3,.05,0xfff3b0,-.8,1.2,-4.02,g);box(.4,.3,.05,0xfff3b0,.8,1.2,-4.02,g);
+for(const z of[-2.7,1.2,2.8]){wheel(.6,.4,-1.2,.6,z,g);wheel(.6,.4,1.2,.6,z,g);}
+}else{
+box(.3,.5,1.4,0xd32f2f,0,.7,0,g);wheel(.35,.12,0,.35,-.75,g);wheel(.35,.12,0,.35,.75,g);
+box(.4,.8,.35,0x3949ab,0,1.35,.1,g);box(.28,.28,.28,0xf1c27d,0,1.95,.1,g);box(.7,.05,.05,0x111111,0,1.05,-.55,g);
+}
+return g;
+}
+let cockpit=null,wheelSpin=null;
+function buildCockpit(k){
+if(cockpit)camera.remove(cockpit);
+cockpit=new THREE.Group();wheelSpin=null;
+if(k==='bike'){
+box(.9,.04,.04,0x111111,0,-.42,-.8,cockpit);box(.22,.14,.05,0x222222,0,-.3,-.8,cockpit);
+box(.12,.08,.02,0x555555,-.42,-.22,-.8,cockpit);box(.12,.08,.02,0x555555,.42,-.22,-.8,cockpit);
+}else{
+box(2.4,.45,.7,0x222a33,0,-.85,-1.2,cockpit);
+const pv=new THREE.Group();pv.position.set(0,-.5,-1);pv.rotation.x=-.9;
+wheelSpin=new THREE.Mesh(new THREE.TorusGeometry(.2,.03,8,20),mat(0x111111));
+pv.add(wheelSpin);cockpit.add(pv);
+}
+camera.add(cockpit);
+}
+const P=new THREE.Group();scene.add(P);
+let cur='bus',cfg=V.bus,model=null,vsel='bus',speed=0,steer=0;
+function setVehicle(k){
+cur=k;cfg=V[k];
+if(model)P.remove(model);
+model=buildModel(k);P.add(model);
+buildCockpit(k);speed=0;steer=0;applyCam();
+}
+function applyCam(){
+if(!model)return;
+model.visible=(camMode==='out');cockpit.visible=(camMode==='in');
+$('cam').textContent='📷 '+t(camMode==='in'?'ci':'co');
+}
+function toggleCam(){camMode=(camMode==='out')?'in':'out';applyCam();}
+$('cam').onclick=toggleCam;
+document.querySelectorAll('.vb').forEach(b=>{b.onclick=()=>{vsel=b.dataset.v;document.querySelectorAll('.vb').forEach(x=>x.classList.toggle('act',x===b));};});
+document.querySelector('.vb[data-v="bus"]').classList.add('act');
+
+/* ---------- বাস্তব রাস্তা / Real roads from OpenStreetMap ---------- */
+let O={lat:23.81,lon:90.41,kx:102000,ky:110540},W=null,segs=[],names=[],loading=false,retryAt=0,nd=0,nu=0;
+const setO=(lat,lon)=>{O={lat:lat,lon:lon,kx:111320*Math.cos(lat*Math.PI/180),ky:110540};};
+const toXZ=(lat,lon)=>[(lon-O.lon)*O.kx,-(lat-O.lat)*O.ky];
+const toLL=(x,z)=>[O.lat-z/O.ky,O.lon+x/O.kx];
+const HW={motorway:7,trunk:6,primary:5.5,secondary:4.5,tertiary:4,unclassified:3.3,residential:3,motorway_link:3.5,trunk_link:3.5,primary_link:3.5,secondary_link:3.5,tertiary_link:3.2};
+const BCOL=[0xd9b99b,0xc97b63,0xe8d5a9,0x8fb8c9,0xb5a3c9];
+
+async function fetchOSM(lat,lon){
+const a=lat.toFixed(5),b=lon.toFixed(5);
+const q='[out:json][timeout:25];(way["highway"~"^('+Object.keys(HW).join('|')+')$"](around:1200,'+a+','+b+');way["building"](around:450,'+a+','+b+'););out geom;';
+for(const h of['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter']){
+try{
+const ac=new AbortController();const tm=setTimeout(()=>ac.abort(),30000);
+const r=await fetch(h,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ac.signal});
+clearTimeout(tm);
+if(r.ok){const j=await r.json();return j.elements||[];}
+}catch(e){}
+}
+throw new Error('osm');
+}
+function ribbon(p,hw,a,y){
+const L=[];
+for(let i=0;i<p.length;i++){
+let dx=0,dz=0;
+if(i>0){const l=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1])||1;dx+=(p[i][0]-p[i-1][0])/l;dz+=(p[i][1]-p[i-1][1])/l;}
+if(i<p.length-1){const l=Math.hypot(p[i+1][0]-p[i][0],p[i+1][1]-p[i][1])||1;dx+=(p[i+1][0]-p[i][0])/l;dz+=(p[i+1][1]-p[i][1])/l;}
+const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;
+L.push([p[i][0]-dz*hw,p[i][1]+dx*hw,p[i][0]+dz*hw,p[i][1]-dx*hw]);
+}
+for(let i=0;i<p.length-1;i++){
+const A=L[i],B=L[i+1];
+a.push(A[0],y,A[1],B[0],y,B[1],A[2],y,A[3],A[2],y,A[3],B[0],y,B[1],B[2],y,B[3]);
+}
+}
+function dashes(p,a){
+for(let i=0;i<p.length-1;i++){
+const x=p[i][0],z=p[i][1],dx=p[i+1][0]-x,dz=p[i+1][1]-z,l=Math.hypot(dx,dz);
+if(l<4)continue;
+const ux=dx/l,uz=dz/l,px=-uz*.13,pz=ux*.13;
+for(let s=1;s+3<=l;s+=9){
+const ax=x+ux*s,az=z+uz*s,bx=x+ux*(s+3),bz=z+uz*(s+3);
+a.push(ax-px,.14,az-pz,bx-px,.14,bz-pz,ax+px,.14,az+pz,ax+px,.14,az+pz,bx-px,.14,bz-pz,bx+px,.14,bz+pz);
+}
+}
+}
+function bld(p,tg){
+const sh=new THREE.Shape(p.slice(0,-1).map(q=>new THREE.Vector2(q[0],-q[1])));
+const h=parseFloat(tg.height)||(parseFloat(tg['building:levels'])||2+Math.floor(Math.random()*4))*3.2;
+const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:Math.min(h,60),bevelEnabled:false}),BM);
+m.rotation.x=-Math.PI/2;
+m.material=mat(BCOL[(Math.random()*BCOL.length)|0]);
+return m;
+}
+function mk(arr,col,off){
+const ge=new THREE.BufferGeometry();
+ge.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));
+ge.computeVertexNormals();
+return new THREE.Mesh(ge,new THREE.MeshLambertMaterial({color:col,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:off,polygonOffsetUnits:off}));
+}
+function build(els){
+const g=new THREE.Group(),rp=[],dp=[],nm=[],S=[];let nb=0;
+for(const w of els){
+if(w.type!=='way'||!w.geometry||w.geometry.length<2)continue;
+const tg=w.tags||{};
+const pts=w.geometry.map(q=>toXZ(q.lat,q.lon));
+if(tg.highway&&HW[tg.highway]){
+const hw=HW[tg.highway],ni=nm.length;
+nm.push([tg['name:bn']||tg.name||'',tg['name:en']||tg.name||tg['name:bn']||'']);
+ribbon(pts,hw,rp,.1);
+for(let i=0;i<pts.length-1;i++)S.push([pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1],hw,ni]);
+if(hw>=4.5)dashes(pts,dp);
+}else if(tg.building&&nb<350&&pts.length>=4){
+try{g.add(bld(pts,tg));nb++;}catch(e){}
+}
+}
+if(rp.length)g.add(mk(rp,0x3a3d42,-1));
+if(dp.length)g.add(mk(dp,0xffffff,-2));
+return{g:g,S:S,nm:nm};
+}
+function install(r){
+if(W){scene.remove(W);W.traverse(o=>{if(o.geometry)o.geometry.dispose();});}
+W=r.g;scene.add(W);segs=r.S;names=r.nm;
+}
+function nearest(x,z){
+let bi=-1,bd=1e18;
+for(let i=0;i<segs.length;i++){
+const s=segs[i],dx=s[2]-s[0],dz=s[3]-s[1];
+let u=((x-s[0])*dx+(z-s[1])*dz)/(dx*dx+dz*dz||1);
+u=u<0?0:u>1?1:u;
+const px=s[0]+dx*u-x,pz=s[1]+dz*u-z,d=px*px+pz*pz;
+if(d<bd){bd=d;bi=i;nu=u;}
+}
+nd=Math.sqrt(bd);return bi;
+}
+function spawn(){
+const i=nearest(0,0),s=segs[i],dx=s[2]-s[0],dz=s[3]-s[1],l=Math.hypot(dx,dz)||1,fx=dx/l,fz=dz/l,o=Math.min(s[4]*.5,2.5);
+P.position.set(s[0]+dx*nu+fz*o,0,s[1]+dz*nu-fx*o);
+P.rotation.y=Math.atan2(-fx,-fz);speed=0;steer=0;
+}
+async function geo(lat,lon){
+try{
+const r=await(await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&accept-language='+lang+'&lat='+lat+'&lon='+lon)).json();
+const a=r.address||{};
+$('pl').textContent=[...new Set([a.suburb||a.village||a.town||a.city,a.county,a.state_district,a.state].filter(Boolean))].join(', ');
+}catch(e){}
+}
+async function loadArea(lat,lon,sp){
+if(loading)return;
+loading=true;say(t(sp?'load':'nw'),90000);
+try{
+const els=await fetchOSM(lat,lon);
+const ll=sp?null:toLL(P.position.x,P.position.z);
+setO(lat,lon);
+const res=build(els);
+if(sp&&!res.S.length){loading=false;say(t('none'),5000);back(true);return;}
+install(res);
+if(sp)spawn();else{const q=toXZ(ll[0],ll[1]);P.position.x=q[0];P.position.z=q[1];}
+hide();geo(lat,lon);
+}catch(e){say(t('err'),5000);if(sp)back(true);else retryAt=performance.now()+15000;}
+loading=false;
+}
+
+/* ---------- মোড ---------- */
+let playing=false;
+function start(){
+const c=map.getCenter();
+$('res').innerHTML='';
+document.body.classList.add('play');playing=true;
+renderer.setSize(window.innerWidth,window.innerHeight,false);
+camMode='out';setVehicle(vsel);
+$('rd').textContent='';$('pl').textContent='';
+loadArea(c.lat,c.lng,true);
+}
+function back(skip){
+playing=false;document.body.classList.remove('play');hide();map.invalidateSize();
+if(!skip&&W){map.setView(toLL(P.position.x,P.position.z),14);}
+}
+$('drv').onclick=start;
+$('mapbtn').onclick=()=>back(false);
+
+/* ---------- কন্ট্রোল ---------- */
+const inp={l:0,r:0,g:0,b:0};
+function bind(id,k){
+const e=$(id);
+e.addEventListener('pointerdown',ev=>{ev.preventDefault();inp[k]=1;e.classList.add('on');});
+['pointerup','pointercancel','pointerleave'].forEach(n=>e.addEventListener(n,()=>{inp[k]=0;e.classList.remove('on');}));
+}
+bind('bl','l');bind('br','r');bind('gs','g');bind('bk','b');
+const KM={ArrowLeft:'l',a:'l',ArrowRight:'r',d:'r',ArrowUp:'g',w:'g',ArrowDown:'b',s:'b',' ':'b'};
+window.addEventListener('keydown',e=>{if(!playing)return;if(KM[e.key])inp[KM[e.key]]=1;if(e.key==='c')toggleCam();});
+window.addEventListener('keyup',e=>{if(KM[e.key])inp[KM[e.key]]=0;});
+window.addEventListener('contextmenu',e=>{if(playing)e.preventDefault();});
+window.addEventListener('resize',()=>{renderer.setSize(window.innerWidth,window.innerHeight,false);camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();});
+
+/* ---------- আপডেট ---------- */
+let fc=0,off=false,lastKmh=-1;
+function update(dt,T){
+if(inp.g)speed+=cfg.acc*dt*Math.max(0,1-speed/(cfg.max*1.02));else speed-=2*dt;
+if(inp.b)speed-=18*dt;
+if(off)speed-=cfg.acc*.7*dt;
+if(speed<0)speed=0;
+steer+=((inp.r-inp.l)-steer)*Math.min(1,dt*6);
+const sf=Math.min(1,speed/5);
+P.rotation.y-=steer*cfg.turn*sf/(1+speed/cfg.max*1.5)*dt;
+const ry=P.rotation.y,s=Math.sin(ry),c=Math.cos(ry);
+P.position.x-=s*speed*dt;P.position.z-=c*speed*dt;
+model.rotation.z=(cur==='bike')?-steer*.35*sf:0;
+
+if(++fc%3===0&&segs.length){
+const i=nearest(P.position.x,P.position.z);
+off=(i<0)||nd>segs[i][4]+1.5;
+if(i>=0&&!off){const n=names[segs[i][5]];$('rd').textContent=n[lang==='bn'?0:1]||n[0]||n[1]||t('noname');}
+}
+if(!loading&&performance.now()>retryAt&&Math.hypot(P.position.x,P.position.z)>600){
+const ll=toLL(P.position.x,P.position.z);loadArea(ll[0],ll[1],false);
+}
+
+const wl=(lx,lz)=>[P.position.x+lx*c+lz*s,P.position.z-lx*s+lz*c];
+if(camMode==='out'){
+const q=wl(0,cfg.o[2]),r=wl(0,cfg.look[1]);
+camera.position.set(q[0],cfg.o[1],q[1]);
+camera.lookAt(r[0],cfg.look[0],r[1]);
+}else{
+const q=wl(cfg.c[0],cfg.c[2]);
+camera.position.set(q[0],cfg.c[1]+Math.sin(T*35)*.004*(speed/cfg.max),q[1]);
+camera.rotation.set(0,ry,0);
+if(wheelSpin)wheelSpin.rotation.z=-steer*1.2;
+}
+const kmh=Math.round(speed*3.6);
+if(kmh!==lastKmh){lastKmh=kmh;$('spd').textContent=kmh;}
+}
+
+applyLang();
+say(t('hint'),8000);
+let last=performance.now(),T0=0;
+function loop(now){
+const dt=Math.min(.05,(now-last)/1000);last=now;T0+=dt;
+if(playing&&model){update(dt,T0);renderer.render(scene,camera);}
+requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
