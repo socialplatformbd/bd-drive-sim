@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>বাংলাদেশ বাস রুট সিম</title>
@@ -89,21 +88,49 @@ const T=k=>S[lang][k],li=()=>lang==='bn'?0:1;
 
 /* ---------- রুট ---------- */
 const SC=25;
-const base=[
-['ঢাকা','Dhaka','চট্টগ্রাম','Chattogram',250,[['দাউদকান্দি','Daudkandi',55],['কুমিল্লা','Cumilla',100],['ফেনী','Feni',160],['মীরসরাই','Mirsarai',205]]],
-['ঢাকা','Dhaka','কুমিল্লা','Cumilla',100,[['দাউদকান্দি','Daudkandi',55]]],
-['ঢাকা','Dhaka','বরিশাল','Barishal',150,[['পদ্মা সেতু','Padma Bridge',40],['ভাঙ্গা','Bhanga',70]]],
-['ঢাকা','Dhaka','সিলেট','Sylhet',240,[['ভৈরব','Bhairab',90],['হবিগঞ্জ','Habiganj',160]]],
-['ঢাকা','Dhaka','রাজশাহী','Rajshahi',255,[['টাঙ্গাইল','Tangail',90],['সিরাজগঞ্জ','Sirajganj',150],['নাটোর','Natore',210]]],
-['ঢাকা','Dhaka','ময়মনসিংহ','Mymensingh',120,[['গাজীপুর','Gazipur',30],['ভালুকা','Bhaluka',75]]]
+/* জায়গার ক্যাটালগ (সব রুটে ব্যবহার হয়): key → [বাংলা, English, ধরন]
+   S=প্রধান স্টপ, L=লোকাল বাস স্টপ, M=শুধু সাইনবোর্ড-গেট, T=টোল প্লাজা (সেতুর সাথে)
+   কিমি-দূরত্ব সব আনুমানিক (ap)। শুধু বরিশাল রুটের মোট দূরত্ব BRTA-র তালিকা (১৫৬ কিমি) থেকে নেওয়া */
+const PT={
+jat:['যাত্রাবাড়ী','Jatrabari','S'],sgb:['সাইনবোর্ড','Signboard','M'],kan:['কাঁচপুর ব্রিজ','Kanchpur Bridge','M'],meg:['মেঘনা ব্রিজ','Meghna Bridge','M'],
+dau:['দাউদকান্দি','Daudkandi','S'],gou:['গৌরীপুর','Gouripur','L'],eli:['এলিয়টগঞ্জ','Eliotganj','L'],cdn:['চান্দিনা','Chandina','L'],nim:['নিমসার বাজার','Nimsar Bazar','M'],
+ccm:['কুমিল্লা সেনানিবাস','Cumilla Cantonment','S'],alk:['আলেখারচর','Alekharchar','M'],pwj:['পদুয়ার বাজার ওয়ার্ল্ড জংশন','Padua Bazar World Junction','M'],cum:['কুমিল্লা','Cumilla','S'],
+sua:['সুয়াগাজী','Suagazi','L'],chd:['চৌদ্দগ্রাম','Chauddagram','L'],miy:['মিয়াবাজার','Miyabazar','M'],fen:['ফেনী মহিপাল','Feni Mohipal','S'],bra:['বারইয়ারহাট','Baraiyarhat','L'],
+mir:['মীরসরাই','Mirsarai','S'],sit:['সীতাকুণ্ড','Sitakunda','L'],bha:['ভাটিয়ারী','Bhatiari','M'],fou:['ফৌজদারহাট','Fouzdarhat','M'],cgt:['সিটি গেট','City Gate','M'],ctg:['চট্টগ্রাম','Chattogram','S'],
+dhk:['ঢাকা','Dhaka','S'],mex:['ঢাকা–মাওয়া এক্সপ্রেসওয়ে','Dhaka-Mawa Expressway','M'],srn:['শ্রীনগর','Srinagar','L'],mtp:['মাওয়া টোল প্লাজা','Mawa Toll Plaza','T'],pdb:['পদ্মা সেতু','Padma Bridge','M'],
+jaj:['জাজিরা','Jajira','L'],ndb:['নাওডোবা','Nawa Doba','M'],bgc:['ভাঙ্গা গোলচত্বর','Bhanga Golchattar','S'],gdi:['গৌরনদী','Gournadi','S'],bts:['বাটাশোর','Batashor','M'],
+uzr:['উজিরপুর','Uzirpur','L'],bbg:['বাবুগঞ্জ','Babuganj','M'],bar:['বরিশাল','Barishal','S'],
+kcp:['কাঁচপুর','Kanchpur','M'],bhu:['ভুলতা','Bhulta','M'],gsm:['গাউসিয়া মার্কেট','Gausia Market','M'],pnd:['পাঁচদোনা','Panchdona','L'],nar:['নরসিংদী','Narsingdi','S'],itk:['ইটাখোলা','Itakhola','M'],
+bhb:['ভৈরব ব্রিজ','Bhairab Bridge','M'],ash:['আশুগঞ্জ','Ashuganj','L'],srl:['সরাইল ওয়ার্ল্ড জংশন','Sarail World Junction','M'],mad:['মাধবপুর','Madhabpur','L'],shy:['শায়েস্তাগঞ্জ','Shayestaganj','S'],
+shp:['শেরপুর','Sherpur','M'],ssr:['দক্ষিণ সুরমা','South Surma','M'],syl:['সিলেট','Sylhet','S'],
+sav:['সাভার','Savar','L'],nbn:['নবীনগর','Nabinagar','M'],chn:['চন্দ্রা','Chandra','M'],mrz:['মির্জাপুর','Mirzapur','L'],elg:['এলেঙ্গা','Elenga','S'],jbe:['যমুনা সেতু পূর্ব','Jamuna Bridge East','T'],
+jmb:['যমুনা সেতু','Jamuna Bridge','M'],hat:['হাটিকুমরুল জংশন','Hatikumrul Junction','M'],bnp:['বনপাড়া','Banpara','M'],nat:['নাটোর','Natore','S'],put:['পুঠিয়া','Puthia','L'],raj:['রাজশাহী','Rajshahi','S'],
+moh:['মহাখালী','Mohakhali','M'],abd:['আব্দুল্লাহপুর','Abdullahpur','M'],ton:['টঙ্গী','Tongi','L'],brd:['বোর্ড বাজার','Board Bazar','M'],gzc:['গাজীপুর চৌরাস্তা','Gazipur Chowrasta','S'],
+cdc:['চন্দনা চৌরাস্তা','Chandana Chowrasta','M'],mwc:['মাওনা চৌরাস্তা','Mawna Chowrasta','L'],jnb:['জৈনা বাজার','Jaina Bazar','M'],blk:['ভালুকা','Bhaluka','S'],ssb:['সিডস্টোর বাজার','Seedstore Bazar','M'],
+tri:['ত্রিশাল','Trishal','L'],bhr:['ভালুর বাজার','Bhalor Bazar','M'],msk:['মাসকান্দা বাস টার্মিনাল','Maskanda Bus Terminal','L'],mym:['ময়মনসিংহ','Mymensingh','S']
+};
+/* রুট: p = [জায়গার key, শুরু থেকে কিমি, 'b'=সেতুর শুরু | 'x'=সেতুর আগের টোল] */
+const DEF=[
+{a:['ঢাকা','Dhaka'],b:['চট্টগ্রাম','Chattogram'],K:250,ev:[[24,1.2,'মেঘনা সেতু','Meghna Bridge']],p:[['jat',0],['sgb',7],['kan',13],['meg',24,'b'],['dau',50],['gou',58],['eli',68],['cdn',76],['nim',84],['ccm',90],['pwj',96],['sua',118],['chd',128],['miy',138],['fen',158],['bra',192],['mir',200],['sit',216],['bha',226],['fou',234],['cgt',243],['ctg',250]]},
+{a:['ঢাকা','Dhaka'],b:['কুমিল্লা','Cumilla'],K:100,ev:[[24,1.2,'মেঘনা সেতু','Meghna Bridge']],p:[['jat',0],['sgb',7],['kan',13],['meg',24,'b'],['dau',50],['gou',58],['eli',68],['cdn',76],['nim',84],['ccm',90],['alk',93],['pwj',96],['cum',100]]},
+{a:['ঢাকা','Dhaka'],b:['বরিশাল','Barishal'],K:156,ev:[[46,6.15,'পদ্মা সেতু','Padma Bridge']],p:[['jat',0],['mex',8],['srn',38],['mtp',45.25,'x'],['pdb',46,'b'],['jaj',55],['ndb',62],['bgc',66],['gdi',128],['bts',134],['uzr',142],['bbg',148],['bar',156]]},
+{a:['ঢাকা','Dhaka'],b:['সিলেট','Sylhet'],K:240,ev:[[92,1.2,'ভৈরব সেতু','Bhairab Bridge']],p:[['dhk',0],['kcp',15],['bhu',24],['gsm',27],['pnd',42],['nar',52],['itk',70],['bhb',92,'b'],['ash',97],['srl',118],['mad',160],['shy',180],['shp',205],['ssr',232],['syl',240]]},
+{a:['ঢাকা','Dhaka'],b:['রাজশাহী','Rajshahi'],K:255,ev:[[125,4.8,'যমুনা সেতু','Jamuna Bridge']],p:[['dhk',0],['sav',24],['nbn',32],['chn',50],['mrz',78],['elg',115],['jbe',124.25,'x'],['jmb',125,'b'],['hat',135],['bnp',190],['nat',210],['put',238],['raj',255]]},
+{a:['ঢাকা','Dhaka'],b:['ময়মনসিংহ','Mymensingh'],K:120,ev:[],p:[['dhk',0],['moh',3],['abd',13],['ton',20],['brd',28],['gzc',33],['cdc',38],['mwc',50],['jnb',62],['blk',78],['ssb',90],['tri',98],['bhr',106],['msk',112],['mym',120]]}
 ];
 const BMD={Chattogram:[[0,'rural'],[20,'brick'],[40,'rural'],[190,'hills']],Cumilla:[[0,'rural'],[15,'brick']],Barishal:[[0,'rural'],[30,'brick']],Sylhet:[[0,'rural'],[170,'tea']],Rajshahi:[[0,'rural'],[25,'brick']],Mymensingh:[[0,'rural'],[45,'brick']]};
-const EVD={Chattogram:[[52,1.5,'মেঘনা সেতু','Meghna Bridge']],Cumilla:[[52,1.5,'মেঘনা সেতু','Meghna Bridge']],Barishal:[[40,6,'পদ্মা সেতু','Padma Bridge']],Sylhet:[[88,1.2,'মেঘনা সেতু (ভৈরব)','Bhairab Bridge']],Rajshahi:[[118,4.8,'যমুনা সেতু','Jamuna Bridge']]};
 function revBm(bm,K){return bm.map((e,i)=>[e[0],i+1<bm.length?bm[i+1][0]:K,e[1]]).reverse().map(x=>[K-x[1],x[2]]);}
 const routes=[];
-base.forEach(b=>{const m=b[5],K=b[4];
-routes.push({a:[b[0],b[1]],b:[b[2],b[3]],km:K,w:[[b[0],b[1],0]].concat(m,[[b[2],b[3],K]]),bm:BMD[b[3]],ev:EVD[b[3]]||[]});
-routes.push({a:[b[2],b[3]],b:[b[0],b[1]],km:K,w:[[b[2],b[3],0]].concat(m.slice().reverse().map(x=>[x[0],x[1],K-x[2]]),[[b[0],b[1],K]]),bm:revBm(BMD[b[3]],K),ev:(EVD[b[3]]||[]).map(e=>[K-(e[0]+e[1]),e[1],e[2],e[3]])});
+function mkPts(d,rev){
+const K=d.K,L=d.ev.length?d.ev[0][1]:0;
+return d.p.map(e=>{const c=PT[e[0]],f=e[2];return{bn:c[0],en:c[1],t:c[2],ap:1,k:rev?(f==='b'?K-e[1]-L:(f==='x'?K-e[1]-L-1.5:K-e[1])):e[1]};}).sort((x,y)=>x.k-y.k);
+}
+DEF.forEach(d=>{
+const K=d.K;
+[false,true].forEach(rev=>{
+const pts=mkPts(d,rev);
+routes.push({a:rev?d.b:d.a,b:rev?d.a:d.b,km:K,pts:pts,w:pts.filter(p=>p.t==='S').map(p=>[p.bn,p.en,p.k]),bm:rev?revBm(BMD[d.b[1]],K):BMD[d.b[1]],ev:rev?d.ev.map(e=>[K-(e[0]+e[1]),e[1],e[2],e[3]]):d.ev});
+});
 });
 const LIV=[[0x1e8e3e,0xffd54f],[0xc62828,0xffffff],[0x1565c0,0xffffff],[0x6a1b9a,0xffca28],[0xef6c00,0x212121]];
 let liv=0,cur=null,state='menu';
@@ -311,7 +338,7 @@ $('cam').textContent='📷 '+T(camMode==='in'?'ci':'co');
 }
 
 /* ---------- রুটের বস্তু: গেট, স্টপ, ফুয়েল স্টেশন ---------- */
-let RG=null,stops=[],fuels=[],LEN=0,bridges=[],juncs=[],cross=[],locals=[],sigs=[],viol=0,pz0=0,clearZ=[],bell={on:false,stop:null},bellT=20,missed=0;
+let RG=null,stops=[],fuels=[],LEN=0,bridges=[],ptz=[],ptI=1,juncs=[],cross=[],locals=[],sigs=[],viol=0,pz0=0,clearZ=[],bell={on:false,stop:null},bellT=20,missed=0;
 function buildRoute(r){
 if(RG){RG.traverse(o=>{if(o.geometry)o.geometry.dispose();});scene.remove(RG);}
 RG=new THREE.Group();scene.add(RG);stops=[];fuels=[];bridges=[];
@@ -326,8 +353,16 @@ box(5,.05,24,0x2e7d32,-8,.12,z,RG);box(3.2,.2,6,0x90a4ae,-12.5,3,z,RG);box(.2,3,
 const bs=sign(w[0],'BUS STOP',4,1.1,'#1b5e20','#ffffff');bs.position.set(-12.5,4.2,z+.2);RG.add(bs);
 stops.push({z:z,done:false,t:0,n:w,people:crowd(z,5+((Math.random()*4)|0))});
 });
+r.pts.forEach(p=>{
+if(p.t!=='M')return;
+const z=-p.k*1000/SC;
+box(.6,7,.6,0x37474f,-7.4,3.5,z,RG);box(.6,7,.6,0x37474f,7.4,3.5,z,RG);box(15.4,1.7,.6,0xeceff1,0,6.9,z,RG);
+const sg=sign(p.bn,p.en,14,1.5,'#00695c','#ffffff');sg.position.set(0,6.9,z+.35);RG.add(sg);
+});
+ptz=r.pts.map(p=>({z:-p.k*1000/SC,bn:p.bn,en:p.en,t:p.t}));ptI=1;
 for(let k=30;k<r.km-12;k+=50){
-const z=-k*1000/SC;
+let kk=k;for(let q=0;q<10&&r.pts.some(p=>(p.t==='S'||p.t==='L')&&Math.abs(p.k-kk)<2.2);q++)kk+=1.5;
+const z=-kk*1000/SC;
 box(8,.05,30,0x555555,-10,.12,z,RG);box(8,.4,10,0xd32f2f,-11,5,z,RG);
 for(const dx of[-14,-8])for(const dz of[-4,4])box(.3,5,.3,0x999999,dx,2.5,z+dz,RG);
 box(.7,1.6,.7,0xffcc00,-11,.8,z-1.8,RG);box(.7,1.6,.7,0xffcc00,-11,.8,z+1.8,RG);
@@ -385,19 +420,15 @@ return a;
 }
 function buildLocals(r){
 locals=[];
-for(let i=0;i<r.w.length-1;i++){
-const a=r.w[i][2],b=r.w[i+1][2],n=Math.floor((b-a-20)/25);
-for(let k=1;k<=n;k++){
-let z=-(a+10+(b-a-20)*k/(n+1))*1000/SC;
-for(const f of fuels)if(Math.abs(f-z)<80)z+=120;
-if(bridges.some(q=>z<q.z0+100&&z>q.z1-100))continue;
-const nm=rnd(LN);
+r.pts.forEach(p=>{
+if(p.t!=='L')return;
+const z=-p.k*1000/SC,nm=[p.bn,p.en];
+if(bridges.some(q=>z<q.z0+100&&z>q.z1-100))return;
 box(5,.05,20,0x66bb6a,-8,.12,z,RG);box(3.2,.2,5,0x90a4ae,-12.5,3,z,RG);box(.2,3,.2,0x607d8b,-11.2,1.5,z-2,RG);box(.2,3,.2,0x607d8b,-13.8,1.5,z-2,RG);
 const sg=sign(nm[0],'BUS STOP',4,1.1,'#2e7d32','#ffffff');sg.position.set(-12.5,4.2,z+.2);RG.add(sg);
 const L={z:z,done:false,wait:2+((Math.random()*5)|0),req:false,nm:nm,people:null};
 L.people=crowd(z,L.wait);locals.push(L);
-}
-}
+});
 }
 function localDone(st){
 const al=st.req?Math.min(pax,1+((Math.random()*3)|0)):0;pax-=al;
@@ -768,6 +799,7 @@ if(gd>70)g.warned=false;
 if(pz0>ln&&zz<=ln&&g.m==='R'&&speed>1.5){viol++;cash-=500;shake=.3;say(T('red'),3000);}
 }
 pz0=zz;
+while(ptI<ptz.length&&zz<=ptz[ptI].z){say('📍 '+(lang==='bn'?ptz[ptI].bn:ptz[ptI].en),2500);ptI++;}
 for(const c of cross){
 const u=c.userData;
 if(Math.abs(c.position.z-zz)>350)continue;
@@ -812,7 +844,8 @@ $('fi').style.width=fuel+'%';$('fi').style.background=fuel<15?'#ef4444':'#22c55e
 const nx=stops.find(s=>!s.done);
 $('st').textContent=T('fuel')+' '+Math.round(fuel)+'%  ·  '+T('cash')+' '+Math.round(cash)+'  ·  '+(veh==='bike'?T('parc')+' '+carried:T('pax')+' '+pax+'/'+CAP());
 const nf=fuels.find(z=>z<zz+10);
-$('rt').textContent=(nx?T('next')+': '+nx.n[li()]+' ('+Math.max(0,Math.round(Math.abs(zz-nx.z)*SC/1000))+' '+T('left')+')':'')+(nf!==undefined?'\n'+T('fst')+': '+Math.round(Math.abs(zz-nf)*SC/1000)+' '+T('left'):'')+(bell.on?'\n🔔 '+T('bellq')+': '+bell.stop.nm[li()]+' ('+(Math.abs(zz-bell.stop.z)*SC/1000).toFixed(1)+' '+T('left')+')':'');
+const np=ptz[ptI];
+$('rt').textContent=(np?'📍 '+(np.t==='S'||np.t==='L'?'🚏 ':'')+(lang==='bn'?np.bn:np.en)+' (~'+Math.max(0,Math.round(Math.abs(zz-np.z)*SC/1000))+' '+T('left')+')':'')+(nf!==undefined?'\n'+T('fst')+': '+Math.round(Math.abs(zz-nf)*SC/1000)+' '+T('left'):'')+(bell.on?'\n🔔 '+T('bellq')+': '+bell.stop.nm[li()]+' ('+(Math.abs(zz-bell.stop.z)*SC/1000).toFixed(1)+' '+T('left')+')':'');
 }
 }
 function audioHush(){if(en)en.g.gain.value=0;if(hornO)hornO.gain.value=0;}
