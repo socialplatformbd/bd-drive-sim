@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>বাংলাদেশ বাস রুট সিম</title>
@@ -43,6 +42,9 @@ button{font:inherit;font-size:13px;background:var(--hud);color:var(--fg);border:
 #rt{white-space:pre-line}
 #toast{z-index:30}
 #sum{white-space:pre-line}
+#own{color:#cbd5e1;font-size:13px;margin-bottom:4px}
+.tg{display:block;max-width:420px;margin:8px auto;background:#229ed9;color:#fff;text-decoration:none;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:700}
+.tg.hot{background:#16a34a;border:2px solid #fff}
 #wl{margin:6px 0;color:#86efac;font-size:15px}
 #gb{background:#0f766e}
 #gar{max-width:420px;margin:8px auto;text-align:left}
@@ -59,6 +61,17 @@ button{font:inherit;font-size:13px;background:var(--hud);color:var(--fg);border:
 #rv{position:fixed;z-index:5;bottom:calc(env(safe-area-inset-bottom,0px) + 86px);right:12px;width:56px;height:56px;border-radius:50%;padding:0;font-size:12px;font-weight:700;touch-action:none;border:2px solid rgba(255,255,255,.35)}
 #rv.on{background:#38bdf8;color:#082f49}
 </style>
+<script>
+(function(){try{
+var c=document.createElement('canvas');c.width=c.height=180;var x=c.getContext('2d'),k=180/512;
+x.fillStyle='#0b1220';x.fillRect(0,0,180,180);x.fillStyle='#3a3d42';x.fillRect(0,330*k,180,180);
+x.fillStyle='#1e8e3e';x.fillRect(70*k,170*k,372*k,210*k);x.fillStyle='#ffd54f';x.fillRect(70*k,300*k,372*k,25*k);
+x.fillStyle='#9fd8f0';for(var i=0;i<5;i++)x.fillRect((90+i*68)*k,195*k,54*k,70*k);
+x.fillStyle='#111';[150,362].forEach(function(cx){x.beginPath();x.arc(cx*k,382*k,42*k,0,6.3);x.fill();});
+var u=c.toDataURL('image/png');
+['apple-touch-icon','icon'].forEach(function(r){var l=document.createElement('link');l.rel=r;l.href=u;document.head.appendChild(l);});
+}catch(e){}})();
+</script>
 </head>
 <body>
 <div id="info" class="h"><span id="spd">0</span> <span data-i="kmh"></span><div id="fb"><i id="fi"></i></div><span id="st"></span><br><span id="gr"></span><br><span id="rt"></span></div>
@@ -68,7 +81,7 @@ button{font:inherit;font-size:13px;background:var(--hud);color:var(--fg);border:
 <div id="gp"><button id="gd">▼</button><div id="gn">1</div><button id="gu">▲</button></div>
 <div id="lc" class="pad"><button id="bl">◀</button><button id="br">▶</button></div>
 <div id="rc" class="pad"><button id="hn" data-i="horn"></button><button id="bk" data-i="brk"></button><button id="gs" data-i="gas"></button></div>
-<div id="menu"><h1 data-i="title"></h1><div id="sum"></div><div id="wl"></div><button id="gb"></button><div id="gar"></div><div id="vv" class="chips"></div><div id="lv"></div><div id="tv" class="chips"></div><div id="wv" class="chips"></div><div id="gv" class="chips"></div><div id="rl"></div><button id="lg"></button></div>
+<div id="menu"><h1 data-i="title"></h1><div id="own" data-i="made"></div><a id="tg" class="tg" data-i="join" href="https://t.me/onlinebdbussimulator" target="_blank" rel="noopener"></a><div id="sum"></div><div id="wl"></div><button id="gb"></button><div id="gar"></div><div id="vv" class="chips"></div><div id="lv"></div><div id="tv" class="chips"></div><div id="wv" class="chips"></div><div id="gv" class="chips"></div><div id="rl"></div><button id="lg"></button></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -80,8 +93,8 @@ if(typeof THREE==='undefined'){$('menu').textContent='3D library failed to load 
 
 /* ---------- ভাষা ---------- */
 const S={
-bn:{title:'🚌 বাংলাদেশ বাস রুট সিম',pick:'বাসের রং ও রুট বেছে নিন',kmh:'কিমি/ঘণ্টা',gas:'গ্যাস ▲',brk:'ব্রেক',horn:'📢 হর্ন',ci:'ককপিট',co:'বাইরে',fuel:'ফুয়েল',cash:'টাকা',pax:'যাত্রী',next:'পরের স্টপ',left:'কিমি',low:'⛽ ফুয়েল কম! পরের ফুয়েল স্টেশনে বাঁ পাশে থামুন',nof:'ফুয়েল শেষ! জরুরি ফুয়েল নিন',emg:'⛽ জরুরি ফুয়েল (৮০০ টাকা)',refu:'⛽ ফুয়েল ভরা হচ্ছে…',board:'🧍 যাত্রী উঠছে…',boarded:'যাত্রী উঠেছে',hit:'ধাক্কা!',hint:'সবুজ স্টপে বাস থামিয়ে নিচের নীল বাটন চাপুন। ফুয়েল স্টেশনেও একইভাবে',arr:'🎉 গন্তব্যে পৌঁছেছেন!',time:'সময়',hits:'ধাক্কা',again:'আবার চালান',en:'English',stopn:'স্টপ',rev:'⏪ পিছে',actb:'🧍 যাত্রী নামান/উঠান',acte:'🏁 যাত্রী নামিয়ে শেষ করুন',actf:'⛽ ফুয়েল ভরুন',alt:'নামলো',brd:'উঠলো',stopnow:'বাসটি থামান, তারপর বাটন চাপুন',fst:'⛽ ফুয়েল স্টেশন',gear:'গিয়ার',auto:'⚙ অটো',man:'⚙ ম্যানুয়াল',upsh:'⬆ গিয়ার বাড়ান',lug:'ইঞ্জিন টানছে না, নিচের গিয়ারে যান',morn:'সকাল',noon:'দুপুর',eve:'সন্ধ্যা',night:'রাত',clr:'পরিষ্কার',rn:'বৃষ্টি',fg:'কুয়াশা',wallet:'ওয়ালেট',garage:'🔧 গ্যারেজ (আপগ্রেড)',up_e:'ইঞ্জিন',up_f:'ফুয়েল ট্যাংক',up_t:'টায়ার ও ব্রেক',up_s:'আসন (যাত্রী)',max:'সর্বোচ্চ',buy:'কিনুন',nomoney:'ওয়ালেটে টাকা কম',bought:'✔ আপগ্রেড হয়েছে!',bonus:'বোনাস',rating:'রেটিং',trips:'ট্রিপ',rst:'সেভ মুছুন',rstq:'আবার চাপলে সব সেভ মুছে যাবে',bell:'🔔 যাত্রী নামতে চায়! পরের লোকাল স্টপে থামুন',bellq:'নামবে',missed:'😠 স্টপ মিস! রেটিং কমেছে',actl:'🧍 নামান/উঠান',red:'🚨 লাল বাতি ভাঙলেন! জরিমানা ৫০০ টাকা',sigw:'🚦 সামনে লাল বাতি, থামুন',bus:'বাস',bike:'বাইক',actd:'📦 পার্সেল ডেলিভারি',delv:'📦 ডেলিভারি হচ্ছে…',acte2:'🏁 ট্রিপ শেষ করুন',parc:'পার্সেল',glow:'গ্রাফিক্স কম',gmed:'গ্রাফিক্স মাঝারি',ghigh:'গ্রাফিক্স ভালো',gfxdown:'ফোন ধীর হচ্ছিল, গ্রাফিক্স কমানো হয়েছে'},
-en:{title:'🚌 Bangladesh Bus Route Sim',pick:'Choose bus colour and route',kmh:'km/h',gas:'Gas ▲',brk:'Brake',horn:'📢 Horn',ci:'Cockpit',co:'Outside',fuel:'Fuel',cash:'Tk',pax:'Passengers',next:'Next stop',left:'km',low:'⛽ Low fuel! Pull in at the station on the left',nof:'Out of fuel! Get emergency fuel',emg:'⛽ Emergency fuel (800 Tk)',refu:'⛽ Refuelling…',board:'🧍 Passengers boarding…',boarded:'Passengers boarded',hit:'Crash!',hint:'Stop on the green bay and tap the blue button. Same at fuel stations',arr:'🎉 You have arrived!',time:'Time',hits:'Crashes',again:'Drive again',en:'বাংলা',stopn:'Stop',rev:'⏪ Rev',actb:'🧍 Drop off / pick up',acte:'🏁 Drop everyone and finish',actf:'⛽ Fill tank',alt:'Got off',brd:'Got on',stopnow:'Stop the bus, then tap the button',fst:'⛽ Fuel station',gear:'Gear',auto:'⚙ Auto',man:'⚙ Manual',upsh:'⬆ Shift up',lug:'Engine is lugging, shift down',morn:'Morning',noon:'Noon',eve:'Evening',night:'Night',clr:'Clear',rn:'Rain',fg:'Fog',wallet:'Wallet',garage:'🔧 Garage (upgrades)',up_e:'Engine',up_f:'Fuel tank',up_t:'Tyres and brakes',up_s:'Seats (passengers)',max:'Max',buy:'Buy',nomoney:'Not enough money',bought:'✔ Upgraded!',bonus:'Bonus',rating:'Rating',trips:'Trips',rst:'Reset save',rstq:'Tap again to erase all progress',bell:'🔔 A passenger wants to get off! Stop at the next local stop',bellq:'Getting off',missed:'😠 Missed the stop! Rating drops',actl:'🧍 Drop off / pick up',red:'🚨 You ran a red light! Fine 500 Tk',sigw:'🚦 Red light ahead, stop',bus:'Bus',bike:'Bike',actd:'📦 Deliver parcel',delv:'📦 Delivering…',acte2:'🏁 Finish trip',parc:'Parcels',glow:'Graphics: low',gmed:'Graphics: medium',ghigh:'Graphics: high',gfxdown:'Phone was slow, graphics lowered'}
+bn:{title:'🚌 বাংলাদেশ বাস রুট সিম',pick:'বাসের রং ও রুট বেছে নিন',kmh:'কিমি/ঘণ্টা',gas:'গ্যাস ▲',brk:'ব্রেক',horn:'📢 হর্ন',ci:'ককপিট',co:'বাইরে',fuel:'ফুয়েল',cash:'টাকা',pax:'যাত্রী',next:'পরের স্টপ',left:'কিমি',low:'⛽ ফুয়েল কম! পরের ফুয়েল স্টেশনে বাঁ পাশে থামুন',nof:'ফুয়েল শেষ! জরুরি ফুয়েল নিন',emg:'⛽ জরুরি ফুয়েল (৮০০ টাকা)',refu:'⛽ ফুয়েল ভরা হচ্ছে…',board:'🧍 যাত্রী উঠছে…',boarded:'যাত্রী উঠেছে',hit:'ধাক্কা!',hint:'সবুজ স্টপে বাস থামিয়ে নিচের নীল বাটন চাপুন। ফুয়েল স্টেশনেও একইভাবে',arr:'🎉 গন্তব্যে পৌঁছেছেন!',time:'সময়',hits:'ধাক্কা',again:'আবার চালান',en:'English',stopn:'স্টপ',rev:'⏪ পিছে',actb:'🧍 যাত্রী নামান/উঠান',acte:'🏁 যাত্রী নামিয়ে শেষ করুন',actf:'⛽ ফুয়েল ভরুন',alt:'নামলো',brd:'উঠলো',stopnow:'বাসটি থামান, তারপর বাটন চাপুন',fst:'⛽ ফুয়েল স্টেশন',gear:'গিয়ার',auto:'⚙ অটো',man:'⚙ ম্যানুয়াল',upsh:'⬆ গিয়ার বাড়ান',lug:'ইঞ্জিন টানছে না, নিচের গিয়ারে যান',morn:'সকাল',noon:'দুপুর',eve:'সন্ধ্যা',night:'রাত',clr:'পরিষ্কার',rn:'বৃষ্টি',fg:'কুয়াশা',wallet:'ওয়ালেট',garage:'🔧 গ্যারেজ (আপগ্রেড)',up_e:'ইঞ্জিন',up_f:'ফুয়েল ট্যাংক',up_t:'টায়ার ও ব্রেক',up_s:'আসন (যাত্রী)',max:'সর্বোচ্চ',buy:'কিনুন',nomoney:'ওয়ালেটে টাকা কম',bought:'✔ আপগ্রেড হয়েছে!',bonus:'বোনাস',rating:'রেটিং',trips:'ট্রিপ',rst:'সেভ মুছুন',rstq:'আবার চাপলে সব সেভ মুছে যাবে',bell:'🔔 যাত্রী নামতে চায়! পরের লোকাল স্টপে থামুন',bellq:'নামবে',missed:'😠 স্টপ মিস! রেটিং কমেছে',actl:'🧍 নামান/উঠান',red:'🚨 লাল বাতি ভাঙলেন! জরিমানা ৫০০ টাকা',sigw:'🚦 সামনে লাল বাতি, থামুন',bus:'বাস',bike:'বাইক',actd:'📦 পার্সেল ডেলিভারি',delv:'📦 ডেলিভারি হচ্ছে…',acte2:'🏁 ট্রিপ শেষ করুন',parc:'পার্সেল',glow:'গ্রাফিক্স কম',gmed:'গ্রাফিক্স মাঝারি',ghigh:'গ্রাফিক্স ভালো',gfxdown:'ফোন ধীর হচ্ছিল, গ্রাফিক্স কমানো হয়েছে',made:'তৈরি করেছেন: Mohammad Rakib',join:'📨 টেলিগ্রাম গ্রুপে যুক্ত হয়ে মতামত দিন',fb:'গেমটা কেমন লাগল? আর কী আপডেট চান? টেলিগ্রাম গ্রুপে জানান 👇',hello:'👋 গেমটা Mohammad Rakib-এর তৈরি। ভালো লাগলে টেলিগ্রাম গ্রুপে মতামত দিন'},
+en:{title:'🚌 Bangladesh Bus Route Sim',pick:'Choose bus colour and route',kmh:'km/h',gas:'Gas ▲',brk:'Brake',horn:'📢 Horn',ci:'Cockpit',co:'Outside',fuel:'Fuel',cash:'Tk',pax:'Passengers',next:'Next stop',left:'km',low:'⛽ Low fuel! Pull in at the station on the left',nof:'Out of fuel! Get emergency fuel',emg:'⛽ Emergency fuel (800 Tk)',refu:'⛽ Refuelling…',board:'🧍 Passengers boarding…',boarded:'Passengers boarded',hit:'Crash!',hint:'Stop on the green bay and tap the blue button. Same at fuel stations',arr:'🎉 You have arrived!',time:'Time',hits:'Crashes',again:'Drive again',en:'বাংলা',stopn:'Stop',rev:'⏪ Rev',actb:'🧍 Drop off / pick up',acte:'🏁 Drop everyone and finish',actf:'⛽ Fill tank',alt:'Got off',brd:'Got on',stopnow:'Stop the bus, then tap the button',fst:'⛽ Fuel station',gear:'Gear',auto:'⚙ Auto',man:'⚙ Manual',upsh:'⬆ Shift up',lug:'Engine is lugging, shift down',morn:'Morning',noon:'Noon',eve:'Evening',night:'Night',clr:'Clear',rn:'Rain',fg:'Fog',wallet:'Wallet',garage:'🔧 Garage (upgrades)',up_e:'Engine',up_f:'Fuel tank',up_t:'Tyres and brakes',up_s:'Seats (passengers)',max:'Max',buy:'Buy',nomoney:'Not enough money',bought:'✔ Upgraded!',bonus:'Bonus',rating:'Rating',trips:'Trips',rst:'Reset save',rstq:'Tap again to erase all progress',bell:'🔔 A passenger wants to get off! Stop at the next local stop',bellq:'Getting off',missed:'😠 Missed the stop! Rating drops',actl:'🧍 Drop off / pick up',red:'🚨 You ran a red light! Fine 500 Tk',sigw:'🚦 Red light ahead, stop',bus:'Bus',bike:'Bike',actd:'📦 Deliver parcel',delv:'📦 Delivering…',acte2:'🏁 Finish trip',parc:'Parcels',glow:'Graphics: low',gmed:'Graphics: medium',ghigh:'Graphics: high',gfxdown:'Phone was slow, graphics lowered',made:'Made by Mohammad Rakib',join:'📨 Join the Telegram group and give feedback',fb:'How did you like the game? What should we add next? Tell us in the Telegram group 👇',hello:'👋 This game is made by Mohammad Rakib. Share your feedback in the Telegram group'}
 };
 let lang='bn';try{lang=localStorage.getItem('l2')||'bn';}catch(e){}
 if(!S[lang])lang='bn';
@@ -89,21 +102,59 @@ const T=k=>S[lang][k],li=()=>lang==='bn'?0:1;
 
 /* ---------- রুট ---------- */
 const SC=25;
-const base=[
-['ঢাকা','Dhaka','চট্টগ্রাম','Chattogram',250,[['দাউদকান্দি','Daudkandi',55],['কুমিল্লা','Cumilla',100],['ফেনী','Feni',160],['মীরসরাই','Mirsarai',205]]],
-['ঢাকা','Dhaka','কুমিল্লা','Cumilla',100,[['দাউদকান্দি','Daudkandi',55]]],
-['ঢাকা','Dhaka','বরিশাল','Barishal',150,[['পদ্মা সেতু','Padma Bridge',40],['ভাঙ্গা','Bhanga',70]]],
-['ঢাকা','Dhaka','সিলেট','Sylhet',240,[['ভৈরব','Bhairab',90],['হবিগঞ্জ','Habiganj',160]]],
-['ঢাকা','Dhaka','রাজশাহী','Rajshahi',255,[['টাঙ্গাইল','Tangail',90],['সিরাজগঞ্জ','Sirajganj',150],['নাটোর','Natore',210]]],
-['ঢাকা','Dhaka','ময়মনসিংহ','Mymensingh',120,[['গাজীপুর','Gazipur',30],['ভালুকা','Bhaluka',75]]]
+/* জায়গার ক্যাটালগ (সব রুটে ব্যবহার হয়): key → [বাংলা, English, ধরন]
+   S=প্রধান স্টপ, L=লোকাল বাস স্টপ, M=শুধু সাইনবোর্ড-গেট, T=টোল প্লাজা (সেতুর সাথে)
+   কিমি-দূরত্ব সব আনুমানিক (ap)। শুধু বরিশাল রুটের মোট দূরত্ব BRTA-র তালিকা (১৫৬ কিমি) থেকে নেওয়া */
+const PT={
+jat:['যাত্রাবাড়ী','Jatrabari','S'],sgb:['সাইনবোর্ড','Signboard','M'],kan:['কাঁচপুর ব্রিজ','Kanchpur Bridge','M'],meg:['মেঘনা ব্রিজ','Meghna Bridge','M'],
+dau:['দাউদকান্দি','Daudkandi','S'],gou:['গৌরীপুর','Gouripur','L'],eli:['এলিয়টগঞ্জ','Eliotganj','L'],cdn:['চান্দিনা','Chandina','L'],nim:['নিমসার বাজার','Nimsar Bazar','M'],
+ccm:['কুমিল্লা সেনানিবাস','Cumilla Cantonment','S'],alk:['আলেখারচর','Alekharchar','M'],pwj:['পদুয়ার বাজার ওয়ার্ল্ড জংশন','Padua Bazar World Junction','M'],cum:['কুমিল্লা','Cumilla','S'],
+sua:['সুয়াগাজী','Suagazi','L'],chd:['চৌদ্দগ্রাম','Chauddagram','L'],miy:['মিয়াবাজার','Miyabazar','M'],fen:['ফেনী মহিপাল','Feni Mohipal','S'],bra:['বারইয়ারহাট','Baraiyarhat','L'],
+mir:['মীরসরাই','Mirsarai','S'],sit:['সীতাকুণ্ড','Sitakunda','L'],bha:['ভাটিয়ারী','Bhatiari','M'],fou:['ফৌজদারহাট','Fouzdarhat','M'],cgt:['সিটি গেট','City Gate','M'],ctg:['চট্টগ্রাম','Chattogram','S'],
+dhk:['ঢাকা','Dhaka','S'],mex:['ঢাকা–মাওয়া এক্সপ্রেসওয়ে','Dhaka-Mawa Expressway','M'],srn:['শ্রীনগর','Srinagar','L'],mtp:['মাওয়া টোল প্লাজা','Mawa Toll Plaza','T'],pdb:['পদ্মা সেতু','Padma Bridge','M'],
+jaj:['জাজিরা','Jajira','L'],ndb:['নাওডোবা','Nawa Doba','M'],bgc:['ভাঙ্গা গোলচত্বর','Bhanga Golchattar','S'],gdi:['গৌরনদী','Gournadi','S'],bts:['বাটাশোর','Batashor','M'],
+uzr:['উজিরপুর','Uzirpur','L'],bbg:['বাবুগঞ্জ','Babuganj','M'],bar:['বরিশাল','Barishal','S'],
+kcp:['কাঁচপুর','Kanchpur','M'],bhu:['ভুলতা','Bhulta','M'],gsm:['গাউসিয়া মার্কেট','Gausia Market','M'],pnd:['পাঁচদোনা','Panchdona','L'],nar:['নরসিংদী','Narsingdi','S'],itk:['ইটাখোলা','Itakhola','M'],
+bhb:['ভৈরব ব্রিজ','Bhairab Bridge','M'],ash:['আশুগঞ্জ','Ashuganj','L'],srl:['সরাইল ওয়ার্ল্ড জংশন','Sarail World Junction','M'],mad:['মাধবপুর','Madhabpur','L'],shy:['শায়েস্তাগঞ্জ','Shayestaganj','S'],
+shp:['শেরপুর','Sherpur','M'],ssr:['দক্ষিণ সুরমা','South Surma','M'],syl:['সিলেট','Sylhet','S'],
+sav:['সাভার','Savar','L'],nbn:['নবীনগর','Nabinagar','M'],chn:['চন্দ্রা','Chandra','M'],mrz:['মির্জাপুর','Mirzapur','L'],elg:['এলেঙ্গা','Elenga','S'],jbe:['যমুনা সেতু পূর্ব','Jamuna Bridge East','T'],
+jmb:['যমুনা সেতু','Jamuna Bridge','M'],hat:['হাটিকুমরুল জংশন','Hatikumrul Junction','M'],bnp:['বনপাড়া','Banpara','M'],nat:['নাটোর','Natore','S'],put:['পুঠিয়া','Puthia','L'],raj:['রাজশাহী','Rajshahi','S'],
+moh:['মহাখালী','Mohakhali','M'],abd:['আব্দুল্লাহপুর','Abdullahpur','M'],ton:['টঙ্গী','Tongi','L'],brd:['বোর্ড বাজার','Board Bazar','M'],gzc:['গাজীপুর চৌরাস্তা','Gazipur Chowrasta','S'],
+cdc:['চন্দনা চৌরাস্তা','Chandana Chowrasta','M'],mwc:['মাওনা চৌরাস্তা','Mawna Chowrasta','L'],jnb:['জৈনা বাজার','Jaina Bazar','M'],blk:['ভালুকা','Bhaluka','S'],ssb:['সিডস্টোর বাজার','Seedstore Bazar','M'],
+tri:['ত্রিশাল','Trishal','L'],bhr:['ভালুর বাজার','Bhalor Bazar','M'],msk:['মাসকান্দা বাস টার্মিনাল','Maskanda Bus Terminal','L'],mym:['ময়মনসিংহ','Mymensingh','S']
+};
+/* রুট: p = [জায়গার key, শুরু থেকে কিমি, 'b'=সেতুর শুরু | 'x'=সেতুর আগের টোল] */
+const DEF=[
+{a:['ঢাকা','Dhaka'],b:['চট্টগ্রাম','Chattogram'],K:250,ev:[[24,1.2,'মেঘনা সেতু','Meghna Bridge']],p:[['jat',0],['sgb',7],['kan',13],['meg',24,'b'],['dau',50],['gou',58],['eli',68],['cdn',76],['nim',84],['ccm',90],['pwj',96],['sua',118],['chd',128],['miy',138],['fen',158],['bra',192],['mir',200],['sit',216],['bha',226],['fou',234],['cgt',243],['ctg',250]]},
+{a:['ঢাকা','Dhaka'],b:['কুমিল্লা','Cumilla'],K:100,ev:[[24,1.2,'মেঘনা সেতু','Meghna Bridge']],p:[['jat',0],['sgb',7],['kan',13],['meg',24,'b'],['dau',50],['gou',58],['eli',68],['cdn',76],['nim',84],['ccm',90],['alk',93],['pwj',96],['cum',100]]},
+{a:['ঢাকা','Dhaka'],b:['বরিশাল','Barishal'],K:156,ev:[[46,6.15,'পদ্মা সেতু','Padma Bridge']],p:[['jat',0],['mex',8],['srn',38],['mtp',45.25,'x'],['pdb',46,'b'],['jaj',55],['ndb',62],['bgc',66],['gdi',128],['bts',134],['uzr',142],['bbg',148],['bar',156]]},
+{a:['ঢাকা','Dhaka'],b:['সিলেট','Sylhet'],K:240,ev:[[92,1.2,'ভৈরব সেতু','Bhairab Bridge']],p:[['dhk',0],['kcp',15],['bhu',24],['gsm',27],['pnd',42],['nar',52],['itk',70],['bhb',92,'b'],['ash',97],['srl',118],['mad',160],['shy',180],['shp',205],['ssr',232],['syl',240]]},
+{a:['ঢাকা','Dhaka'],b:['রাজশাহী','Rajshahi'],K:255,ev:[[125,4.8,'যমুনা সেতু','Jamuna Bridge']],p:[['dhk',0],['sav',24],['nbn',32],['chn',50],['mrz',78],['elg',115],['jbe',124.25,'x'],['jmb',125,'b'],['hat',135],['bnp',190],['nat',210],['put',238],['raj',255]]},
+{a:['ঢাকা','Dhaka'],b:['ময়মনসিংহ','Mymensingh'],K:120,ev:[],p:[['dhk',0],['moh',3],['abd',13],['ton',20],['brd',28],['gzc',33],['cdc',38],['mwc',50],['jnb',62],['blk',78],['ssb',90],['tri',98],['bhr',106],['msk',112],['mym',120]]}
 ];
 const BMD={Chattogram:[[0,'rural'],[20,'brick'],[40,'rural'],[190,'hills']],Cumilla:[[0,'rural'],[15,'brick']],Barishal:[[0,'rural'],[30,'brick']],Sylhet:[[0,'rural'],[170,'tea']],Rajshahi:[[0,'rural'],[25,'brick']],Mymensingh:[[0,'rural'],[45,'brick']]};
-const EVD={Chattogram:[[52,1.5,'মেঘনা সেতু','Meghna Bridge']],Cumilla:[[52,1.5,'মেঘনা সেতু','Meghna Bridge']],Barishal:[[40,6,'পদ্মা সেতু','Padma Bridge']],Sylhet:[[88,1.2,'মেঘনা সেতু (ভৈরব)','Bhairab Bridge']],Rajshahi:[[118,4.8,'যমুনা সেতু','Jamuna Bridge']]};
 function revBm(bm,K){return bm.map((e,i)=>[e[0],i+1<bm.length?bm[i+1][0]:K,e[1]]).reverse().map(x=>[K-x[1],x[2]]);}
+/* প্রতিটি রুটের আলাদা চেহারা: th=শুরুর এলাকার দৃশ্য, jc=শহরে ঢোকার মোড়ের ধরন (পর্যায়ক্রমে), tr=শুরুর ট্র্যাফিক
+   মোড়: sig=সিগন্যাল, zeb=শুধু জেব্রা, bz=বাজারের মোড়, y=Y-মোড়, foot=ফুটওভারব্রিজ, rail=রেল ক্রসিং */
+const STYLES=[
+{th:'flyover',jc:['sig','foot','bz','sig','y','zeb'],tr:'jam'},{th:'port',jc:['zeb','sig','y','bz','rail','sig'],tr:'truck'},
+{th:'market',jc:['bz','sig','foot','zeb'],tr:'rick'},{th:'village',jc:['sig','y','rail','foot'],tr:'normal'},
+{th:'garments',jc:['foot','sig','y','bz'],tr:'jam'},{th:'river',jc:['zeb','bz','y','sig'],tr:'rick'},
+{th:'garments',jc:['rail','sig','zeb','foot'],tr:'truck'},{th:'tea',jc:['y','zeb','sig','bz'],tr:'normal'},
+{th:'flyover',jc:['sig','zeb','foot','rail'],tr:'jam'},{th:'village',jc:['bz','zeb','y','sig'],tr:'rick'},
+{th:'market',jc:['sig','foot','zeb','rail'],tr:'jam'},{th:'village',jc:['zeb','sig','bz','y'],tr:'normal'}
+];
 const routes=[];
-base.forEach(b=>{const m=b[5],K=b[4];
-routes.push({a:[b[0],b[1]],b:[b[2],b[3]],km:K,w:[[b[0],b[1],0]].concat(m,[[b[2],b[3],K]]),bm:BMD[b[3]],ev:EVD[b[3]]||[]});
-routes.push({a:[b[2],b[3]],b:[b[0],b[1]],km:K,w:[[b[2],b[3],0]].concat(m.slice().reverse().map(x=>[x[0],x[1],K-x[2]]),[[b[0],b[1],K]]),bm:revBm(BMD[b[3]],K),ev:(EVD[b[3]]||[]).map(e=>[K-(e[0]+e[1]),e[1],e[2],e[3]])});
+function mkPts(d,rev){
+const K=d.K,L=d.ev.length?d.ev[0][1]:0;
+return d.p.map(e=>{const c=PT[e[0]],f=e[2];return{bn:c[0],en:c[1],t:c[2],ap:1,k:rev?(f==='b'?K-e[1]-L:(f==='x'?K-e[1]-L-1.5:K-e[1])):e[1]};}).sort((x,y)=>x.k-y.k);
+}
+DEF.forEach(d=>{
+const K=d.K;
+[false,true].forEach(rev=>{
+const pts=mkPts(d,rev);
+routes.push({st:STYLES[routes.length],a:rev?d.b:d.a,b:rev?d.a:d.b,km:K,pts:pts,w:pts.filter(p=>p.t==='S').map(p=>[p.bn,p.en,p.k]),bm:rev?revBm(BMD[d.b[1]],K):BMD[d.b[1]],ev:rev?d.ev.map(e=>[K-(e[0]+e[1]),e[1],e[2],e[3]]):d.ev});
+});
 });
 const LIV=[[0x1e8e3e,0xffd54f],[0xc62828,0xffffff],[0x1565c0,0xffffff],[0x6a1b9a,0xffca28],[0xef6c00,0x212121]];
 let liv=0,cur=null,state='menu';
@@ -259,7 +310,8 @@ let r='rural';for(const e of cur.bm)if(km>=e[0])r=e[1];return r;
 function skin(o){
 const u=o.userData;u.u=Math.random();o.visible=u.u<D[biomeAt(o.position.z)][u.t]*GF[gi].den;
 if(o.visible&&u.t!=='hill'&&u.t!=='chim'){for(const j of juncs)if(Math.abs(o.position.z-j)<9){o.visible=false;break;}
-if(o.visible&&o.position.x<0)for(const j of clearZ)if(Math.abs(o.position.z-j)<14){o.visible=false;break;}}
+if(o.visible&&o.position.x<0)for(const j of clearZ)if(Math.abs(o.position.z-j)<14){o.visible=false;break;}
+if(o.visible&&o.position.z<themeZ[0]&&o.position.z>themeZ[1]&&Math.abs(o.position.x)<themeR&&(!themeSide||o.position.x*themeSide>0))o.visible=false;}
 }
 function addS(o,t,x,z){o.position.set(x,0,z);o.userData={t:t,z0:z};scene.add(o);scen.push(o);}
 for(let i=0;i<30;i++)for(const s of sides)addS(makeTree(),'tree',s*(8+Math.random()*4),-i*14-Math.random()*8);
@@ -311,11 +363,11 @@ $('cam').textContent='📷 '+T(camMode==='in'?'ci':'co');
 }
 
 /* ---------- রুটের বস্তু: গেট, স্টপ, ফুয়েল স্টেশন ---------- */
-let RG=null,stops=[],fuels=[],LEN=0,bridges=[],juncs=[],cross=[],locals=[],sigs=[],viol=0,pz0=0,clearZ=[],bell={on:false,stop:null},bellT=20,missed=0;
+let RG=null,stops=[],fuels=[],LEN=0,bridges=[],ptz=[],ptI=1,curSt={th:'market',jc:['sig'],tr:'normal'},trMode='normal',themeR=14,themeSide=0,themeZ=[-60,-420],juncs=[],cross=[],locals=[],sigs=[],viol=0,pz0=0,clearZ=[],bell={on:false,stop:null},bellT=20,missed=0;
 function buildRoute(r){
 if(RG){RG.traverse(o=>{if(o.geometry)o.geometry.dispose();});scene.remove(RG);}
 RG=new THREE.Group();scene.add(RG);stops=[];fuels=[];bridges=[];
-LEN=r.km*1000/SC;
+LEN=r.km*1000/SC;curSt=r.st;buildTheme(r.st.th);
 r.w.forEach((w,i)=>{
 const z=-w[2]*1000/SC;
 if(i>0){
@@ -326,8 +378,16 @@ box(5,.05,24,0x2e7d32,-8,.12,z,RG);box(3.2,.2,6,0x90a4ae,-12.5,3,z,RG);box(.2,3,
 const bs=sign(w[0],'BUS STOP',4,1.1,'#1b5e20','#ffffff');bs.position.set(-12.5,4.2,z+.2);RG.add(bs);
 stops.push({z:z,done:false,t:0,n:w,people:crowd(z,5+((Math.random()*4)|0))});
 });
+r.pts.forEach(p=>{
+if(p.t!=='M')return;
+const z=-p.k*1000/SC;
+box(.6,7,.6,0x37474f,-7.4,3.5,z,RG);box(.6,7,.6,0x37474f,7.4,3.5,z,RG);box(15.4,1.7,.6,0xeceff1,0,6.9,z,RG);
+const sg=sign(p.bn,p.en,14,1.5,'#00695c','#ffffff');sg.position.set(0,6.9,z+.35);RG.add(sg);
+});
+ptz=r.pts.map(p=>({z:-p.k*1000/SC,bn:p.bn,en:p.en,t:p.t}));ptI=1;
 for(let k=30;k<r.km-12;k+=50){
-const z=-k*1000/SC;
+let kk=k;for(let q=0;q<10&&r.pts.some(p=>(p.t==='S'||p.t==='L')&&Math.abs(p.k-kk)<2.2);q++)kk+=1.5;
+const z=-kk*1000/SC;
 box(8,.05,30,0x555555,-10,.12,z,RG);box(8,.4,10,0xd32f2f,-11,5,z,RG);
 for(const dx of[-14,-8])for(const dz of[-4,4])box(.3,5,.3,0x999999,dx,2.5,z+dz,RG);
 box(.7,1.6,.7,0xffcc00,-11,.8,z-1.8,RG);box(.7,1.6,.7,0xffcc00,-11,.8,z+1.8,RG);
@@ -385,19 +445,15 @@ return a;
 }
 function buildLocals(r){
 locals=[];
-for(let i=0;i<r.w.length-1;i++){
-const a=r.w[i][2],b=r.w[i+1][2],n=Math.floor((b-a-20)/25);
-for(let k=1;k<=n;k++){
-let z=-(a+10+(b-a-20)*k/(n+1))*1000/SC;
-for(const f of fuels)if(Math.abs(f-z)<80)z+=120;
-if(bridges.some(q=>z<q.z0+100&&z>q.z1-100))continue;
-const nm=rnd(LN);
+r.pts.forEach(p=>{
+if(p.t!=='L')return;
+const z=-p.k*1000/SC,nm=[p.bn,p.en];
+if(bridges.some(q=>z<q.z0+100&&z>q.z1-100))return;
 box(5,.05,20,0x66bb6a,-8,.12,z,RG);box(3.2,.2,5,0x90a4ae,-12.5,3,z,RG);box(.2,3,.2,0x607d8b,-11.2,1.5,z-2,RG);box(.2,3,.2,0x607d8b,-13.8,1.5,z-2,RG);
 const sg=sign(nm[0],'BUS STOP',4,1.1,'#2e7d32','#ffffff');sg.position.set(-12.5,4.2,z+.2);RG.add(sg);
 const L={z:z,done:false,wait:2+((Math.random()*5)|0),req:false,nm:nm,people:null};
 L.people=crowd(z,L.wait);locals.push(L);
-}
-}
+});
 }
 function localDone(st){
 const al=st.req?Math.min(pax,1+((Math.random()*3)|0)):0;pax-=al;
@@ -429,6 +485,13 @@ sigs.push(g);return g;
 }
 function sigUpdate(){
 for(const g of sigs){
+if(g.rail){
+const ph=(tm+g.off)%45;g.m=ph>=30?'R':'G';g.c=g.m;
+g.arms.forEach(a=>{a.rotation.z=a.userData.s*(g.m==='R'?0:1.3);});
+const tp=ph>=33&&ph<40;g.train.visible=tp;if(tp)g.train.position.x=-95+(ph-33)/7*190;
+g.lamps.forEach((l,i)=>{l.material.color.setHex(g.m==='R'&&((Math.floor(tm*2)+i)%2)?0xff2a2a:0x330808);});
+continue;
+}
 const ph=(tm+g.off)%27,m=ph<14?'G':(ph<17?'Y':'R'),c=ph<19?'R':(ph<25?'G':'Y');
 if(!g.init||m!==g.m||c!==g.c){g.m=m;g.c=c;g.init=1;g.H.forEach(L=>setLamps(L,m));g.X.forEach(L=>setLamps(L,c));}
 }
@@ -436,13 +499,17 @@ if(!g.init||m!==g.m||c!==g.c){g.m=m;g.c=c;g.init=1;g.H.forEach(L=>setLamps(L,m))
 const SRN=[['বাজার রোড','Bazar Road'],['স্টেশন রোড','Station Road'],['কলেজ রোড','College Road'],['হাসপাতাল রোড','Hospital Road'],['স্কুল রোড','School Road'],['মসজিদ রোড','Mosque Road'],['বন্দর রোড','Port Road'],['নতুন বাজার','Notun Bazar']];
 function buildJunctions(){
 juncs=[];cross=[];sigs=[];
-stops.forEach(st=>{
-[[st.z-45,'x'],[st.z+45,'t']].forEach(a=>{
+stops.forEach((st,si)=>{
+const kind=curSt.jc[si%curSt.jc.length];
+(kind==='y'?[[st.z-45,'y']]:kind==='rail'?[[st.z-45,'r']]:kind==='foot'?[[st.z-45,'f'],[st.z+45,'t']]:[[st.z-45,'x'],[st.z+45,'t']]).forEach(a=>{
 const zj=a[0],ty=a[1];
 if(zj>10)return;
 for(const b of bridges)if(zj<b.z0+60&&zj>b.z1-30)return;
 for(const f of fuels)if(Math.abs(zj-f)<45)return;
 juncs.push(zj);
+if(ty==='y'){buildY(zj);return;}
+if(ty==='r'){buildRail(zj);return;}
+if(ty==='f'){buildFoot(zj);return;}
 const sd0=Math.random()<.5?-1:1,sds=ty==='x'?[-1,1]:[sd0],nm=rnd(SRN);
 sds.forEach(sd=>{
 const sp=new THREE.Mesh(new THREE.PlaneGeometry(70,8),mat(0x3a3d42));sp.rotation.x=-Math.PI/2;sp.position.set(sd*41,.05,zj);RG.add(sp);
@@ -453,7 +520,7 @@ const sg=sign(nm[0],nm[1],3.4,.9,'#0d6b3a','#ffffff');sg.position.set(sd*7.6,3.3
 for(let x=-5.5;x<=5.6;x+=1.1){box(.55,.02,2.6,0xffffff,x,.09,zj+7,RG);box(.55,.02,2.6,0xffffff,x,.09,zj-7,RG);}
 const mk=()=>{const q=Math.random();return q<.25?makeRick():q<.45?makeCng():q<.65?makeBike():q<.8?makeTempo():makeCar(rnd([0xeeeeee,0xf9a825,0x1976d2,0xd32f2f]));};
 if(ty==='x'){
-const gs=mkSignal(zj);
+const gs=kind==='sig'?mkSignal(zj):null;if(kind==='bz')stalls(zj);
 [1,-1].forEach(d=>{
 const c=mk();c.userData.g=gs;c.userData.d=d;c.userData.sp=3+Math.random()*3;
 c.position.set(-d*(15+Math.random()*50),0,zj+d*2);c.rotation.y=d>0?-Math.PI/2:Math.PI/2;RG.add(c);cross.push(c);
@@ -463,6 +530,77 @@ const c=mk();c.position.set(sd0*11,0,zj+(sd0>0?-2:2));c.rotation.y=sd0>0?Math.PI
 }
 });
 });
+}
+function stalls(zj){
+for(let z=zj-34;z<=zj+34;z+=8){if(Math.abs(z-zj)<6)continue;for(const sd of[-1,1]){const x=sd*(8.5+Math.random()*1.5);box(2.2,2.1,2.6,rnd(BC),x,1.05,z,RG);box(2.6,.15,3,rnd(AWN),x,2.3,z,RG);}}
+}
+function zebra(zj){for(let x=-5.5;x<=5.6;x+=1.1){box(.55,.02,2.6,0xffffff,x,.09,zj+7,RG);box(.55,.02,2.6,0xffffff,x,.09,zj-7,RG);}}
+function buildY(zj){
+const sd=Math.random()<.5?-1:1,a=.62,dx=sd*Math.cos(a),dz=-Math.sin(a),g=new THREE.Group();
+g.position.set(sd*6+dx*34,.05,zj+dz*34);g.rotation.y=Math.atan2(-dz,dx);RG.add(g);
+const m=new THREE.Mesh(new THREE.PlaneGeometry(70,8),mat(0x3a3d42));m.rotation.x=-Math.PI/2;g.add(m);
+const nm=rnd(SRN),sg=sign(nm[0],nm[1],3.4,.9,'#0d6b3a','#ffffff');
+box(.15,3,.15,0x555555,sd*7.6,1.5,zj+9,RG);sg.position.set(sd*7.6,3.3,zj+9.2);RG.add(sg);
+const c=makeCng();c.position.set(sd*14,0,zj-8);c.rotation.y=sd>0?Math.PI/2-.6:-Math.PI/2+.6;RG.add(c);
+}
+function buildFoot(zj){
+for(const sd of[-1,1])box(3,8.2,3,0x78909c,sd*8.8,4.1,zj,RG);
+box(20,.45,3,0x90a4ae,0,8.4,zj,RG);box(20,1,.2,0xb0bec5,0,9.1,zj-1.4,RG);box(20,1,.2,0xb0bec5,0,9.1,zj+1.4,RG);
+const sg=sign('ফুটওভারব্রিজ','FOOT OVERBRIDGE',6,1.2,'#0d47a1','#ffffff');sg.position.set(0,7.6,zj+1.6);RG.add(sg);
+zebra(zj);
+}
+function buildRail(zj){
+for(const dz of[-.75,.75])box(190,.12,.12,0x555555,0,.15,zj+dz,RG);
+for(let x=-14;x<=14;x+=1.4)box(.35,.08,3,0x5d4037,x,.11,zj,RG);
+const g={z:zj,off:Math.random()*45,m:'G',c:'G',rail:true,init:1,H:[],X:[],arms:[],lamps:[],warned:false};
+[[-6.2,zj+4,1],[6.2,zj-4,-1]].forEach(a=>{
+const pv=new THREE.Group();pv.position.set(a[0],1.3,a[1]);pv.userData.s=a[2];
+box(6,.18,.18,0xffffff,a[2]*3,0,0,pv);box(.7,.2,.2,0xd32f2f,a[2]*.9,0,0,pv);box(.7,.2,.2,0xd32f2f,a[2]*2.7,0,0,pv);
+pv.rotation.z=a[2]*1.3;RG.add(pv);g.arms.push(pv);
+box(.25,1.6,.25,0x555555,a[0]-a[2]*.3,.8,a[1],RG);
+const lm=new THREE.Mesh(new THREE.BoxGeometry(.3,.3,.15),new THREE.MeshBasicMaterial({color:0x330808}));lm.position.set(a[0]-a[2]*.3,1.75,a[1]);RG.add(lm);g.lamps.push(lm);
+});
+const tr=new THREE.Group();box(10,3.4,3,0x1565c0,0,2.2,0,tr);box(2,.4,3.2,0xffd54f,5.5,3.8,0,tr);
+for(let i=1;i<=4;i++)box(14,3,2.8,i%2?0x8d6e63:0x6d4c41,-5-i*15,2,0,tr);
+tr.position.set(-95,0,zj);tr.visible=false;RG.add(tr);g.train=tr;
+const sg=sign('রেল ক্রসিং','RAIL CROSSING',3.4,.9,'#b71c1c','#ffffff');box(.15,3,.15,0x555555,-7.6,1.5,zj+9,RG);sg.position.set(-7.6,3.3,zj+9.2);RG.add(sg);
+sigs.push(g);
+}
+function seg(w,h,y,c,z0,z1,x){for(let z=z0;z>z1;z-=20)box(w,h,20.2,c,x,y,z-10,RG);}
+function buildTheme(th){
+const R=Math.random;
+themeZ=[-60,-420];themeR=14;themeSide=0;
+if(th==='flyover'){
+seg(17,1,9.5,0x9e9e9e,-70,-230,0);seg(.4,1.2,10.6,0x757575,-70,-230,-8.3);seg(.4,1.2,10.6,0x757575,-70,-230,8.3);
+for(let z=-90;z>-230;z-=40){box(1.3,9.5,1.3,0x8d8d8d,-8.6,4.75,z,RG);box(1.3,9.5,1.3,0x8d8d8d,8.6,4.75,z,RG);}
+const sg=sign('ফ্লাইওভার','FLYOVER',8,1.6,'#455a64','#ffffff');sg.position.set(0,8.6,-69.5);RG.add(sg);
+}else if(th==='market'){
+for(let z=-60;z>-420;z-=12)for(const sd of[-1,1]){const x=sd*(10+R()*1.5);box(2.4,2.2,3,rnd(BC),x,1.1,z,RG);box(2.8,.2,3.4,rnd(AWN),x,2.4,z,RG);}
+}else if(th==='garments'){
+themeR=50;
+for(let z=-100;z>-460;z-=75)for(const sd of[-1,1]){box(34,7,50,rnd([0x78909c,0x546e7a,0x90a4ae]),sd*30,3.5,z,RG);box(34.4,.6,50.4,0x37474f,sd*30,7.3,z,RG);box(.2,2,50,0x777777,sd*13,1,z,RG);}
+const sg=sign('গার্মেন্টস ফ্যাক্টরি','GARMENTS FACTORY',10,1.8,'#1565c0','#ffffff');sg.position.set(-30,9.2,-74.5);RG.add(sg);
+}else if(th==='port'){
+themeR=50;
+for(let z=-60;z>-440;z-=14)for(const sd of[-1,1]){const n=1+((R()*3)|0),x=sd*(16+R()*10);for(let k=0;k<n;k++)box(2.5,2.6,12,rnd([0xc62828,0x1565c0,0x2e7d32,0xf9a825,0x6a1b9a]),x,1.3+k*2.65,z+R()*3,RG);}
+box(1.5,30,1.5,0xf9a825,-30,15,-120,RG);box(44,1.5,1.5,0xf9a825,-10,29,-120,RG);box(.4,12,.4,0x555555,8,22,-120,RG);
+const sg=sign('বন্দর এলাকা','PORT AREA',8,1.6,'#37474f','#ffffff');sg.position.set(-12,6,-74.5);RG.add(sg);
+}else if(th==='village'){
+for(const sd of[-1,1]){box(34,.06,44,0x2a7fb5,sd*24,.03,-150-sd*40,RG);}
+for(let i=0;i<18;i++){const sd=i%2?1:-1,h=makeHut();h.position.set(sd*(12+R()*5),0,-70-i*18);RG.add(h);}
+for(let i=0;i<14;i++){const sd=i%2?1:-1,p=makePalm();p.position.set(sd*(8+R()*4),0,-60-i*24);RG.add(p);}
+for(let i=0;i<6;i++){const sd=R()<.5?-1:1;box(1.2,1.1,2.2,0x6d4c41,sd*(8+R()*2),.6,-90-i*55,RG);}
+}else if(th==='river'){
+themeR=110;themeSide=1;
+seg(100,.04,.02,0x2a7fb5,-40,-460,60);
+for(let i=0;i<6;i++){box(6,.8,2,rnd([0x6d4c41,0x1565c0,0xc62828]),20+R()*50,.45,-80-i*60,RG);box(.2,3,.2,0x333333,23+R()*50,2,-80-i*60,RG);}
+const sg=sign('লঞ্চঘাট','LAUNCH GHAT',6,1.4,'#006064','#ffffff');sg.position.set(8,4,-74.5);RG.add(sg);
+}else if(th==='tea'){
+for(let z=-60;z>-440;z-=20)for(const sd of[-1,1])for(let k=0;k<3;k++)box(2.2,1,10,0x2f7d32,sd*(15+k*4.5),.5,z,RG);
+box(14,6,20,0x8d6e63,-32,3,-150,RG);box(14.4,.6,20.4,0x5d4037,-32,6.3,-150,RG);
+const sg=sign('চা বাগান','TEA ESTATE',6,1.4,'#1b5e20','#ffffff');sg.position.set(-32,7.5,-139.5);RG.add(sg);
+const h1=makeHill(),h2=makeHill();h1.position.set(-70,0,-200);h2.position.set(75,0,-300);RG.add(h1);RG.add(h2);
+}
 }
 function setZones(r){
 const Z=U.uZ.value;let n=0;const add=(c,h,f)=>{if(n<32)Z[n++].set(c,h,f);};
@@ -477,7 +615,10 @@ U.uA.value=AMP[r.a[1]==='Dhaka'?r.b[1]:r.a[1]]||1;
 /* ---------- ট্র্যাফিক ---------- */
 const traffic=[];
 const DT={city:{rick:1,van:.9,bike:1,tempo:.9},town:{rick:.8,van:.6,bike:1,tempo:.8},rural:{rick:.35,van:.4,bike:.7,tempo:.5},brick:{rick:.3,van:.8,bike:.6,tempo:.4},tea:{rick:.2,van:.3,bike:.5,tempo:.4},hills:{rick:.15,van:.2,bike:.5,tempo:.4},bridge:{rick:0,van:0,bike:.6,tempo:.2}};
-function rollV(t){const d=DT[biomeAt(t.position.z)][t.userData.t];t.visible=(t.userData.rk<GF[gi].tl/23)&&(d===undefined||Math.random()<d);}
+function rollV(t){const ty=t.userData.t;let d=DT[biomeAt(t.position.z)][ty];
+if(trMode==='rick'&&(ty==='rick'||ty==='van'||ty==='bike'||ty==='tempo'))d=1;
+if(trMode==='truck'&&ty==='car')d=.4;
+t.visible=(t.userData.rk<GF[gi].tl/23)&&(d===undefined||Math.random()<d);}
 function applyGfx(){
 const q=GF[gi];
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,q.pr));renderer.setSize(window.innerWidth,window.innerHeight);
@@ -595,7 +736,7 @@ const stars=Math.max(1,5-late-Math.min(3,hits)-Math.min(2,missed)-Math.min(2,vio
 const bonus=stars*cur.km*(veh==='bike'?3:8),net=Math.round(cash+bonus);
 SV.w=Math.max(0,SV.w+net);SV.trips++;SV.stars=Math.max(SV.stars,stars);save();
 const m=Math.floor(tm/60),sc=Math.round(tm%60);
-showMenu(T('arr')+'\n'+'★'.repeat(stars)+'☆'.repeat(5-stars)+'  ('+T('rating')+')\n'+T('time')+': '+m+':'+String(sc).padStart(2,'0')+'  ·  '+(veh==='bike'?T('parc'):T('pax'))+': '+carried+'  ·  '+T('hits')+': '+hits+'  ·  🚦 '+viol+'\n'+T('cash')+': '+Math.round(cash)+'  +  '+T('bonus')+': '+bonus+'  =  '+net);
+showMenu(T('arr')+'\n'+'★'.repeat(stars)+'☆'.repeat(5-stars)+'  ('+T('rating')+')\n'+T('time')+': '+m+':'+String(sc).padStart(2,'0')+'  ·  '+(veh==='bike'?T('parc'):T('pax'))+': '+carried+'  ·  '+T('hits')+': '+hits+'  ·  🚦 '+viol+'\n'+T('cash')+': '+Math.round(cash)+'  +  '+T('bonus')+': '+bonus+'  =  '+net+'\n\n'+T('fb'));$('tg').classList.add('hot');
 }
 function renderGarage(){
 $('wl').textContent='💰 '+T('wallet')+': '+Math.round(SV.w)+' '+T('cash')+'  ·  '+T('trips')+': '+SV.trips+'  ·  ⭐ '+SV.stars;
@@ -619,14 +760,15 @@ let speed=0,steer=0,fuel=70,cash=0,pax=0,hits=0,hitCd=0,shake=0,tm=0,lowWarn=fal
 let job=null,curKind=null,curStop=null,wasPad=false,carried=0,gear=1,auto=false,shiftT=0,lastHint=-9;
 function startRoute(i){
 audioInit();
-cur=routes[i];buildRoute(cur);
+cur=routes[i];buildRoute(cur);trMode=cur.st.tr;
 for(const o of scen){o.position.z=o.userData.z0;skin(o);}
 hour=startHour;rainM.visible=(weather==='rain');
 if(veh==='bike'){stops[0].done=true;stops[0].people.forEach(q=>{q.visible=false;});locals.forEach(l=>l.people.forEach(q=>{q.visible=false;}));}
 P.position.set(-8,0,0);P.rotation.y=0;speed=0;steer=0;fuel=70;cash=0;pax=0;hits=0;tm=0;lowWarn=false;job=null;carried=0;wasPad=false;gear=1;rpm=0;shiftT=0;lastHint=-9;missed=0;viol=0;pz0=0;bell.on=false;bellT=15+Math.random()*15;GV0=veh==='bike'?GVK:GVB;GA0=veh==='bike'?GAK:GAB;GV=GV0.map(v=>v*(1+.05*SV.u.e));GA=GA0.map(a=>a*(1+.12*SV.u.e));
 setBus();
-traffic.forEach((v,k)=>{const u=v.userData;v.position.set(u.bx,0,-70-k*28);u.cur=u.sp;u.yl=0;rollV(v);});
+traffic.forEach((v,k)=>{const u=v.userData;v.position.set(u.bx,0,trMode==='jam'?-40-k*18:-70-k*28);u.cur=u.sp*(trMode==='jam'?.7:1);u.yl=0;rollV(v);});
 ground.material.color.set(GC[biomeAt(0)]);envUpdate(0);applyGfx();
+$('tg').classList.remove('hot');
 $('menu').style.display='none';state='play';
 say(T('hint'),5000);
 }
@@ -763,11 +905,13 @@ speed*=.2;hits++;hitCd=1.2;shake=.4;P.position.x+=(xx>=t.position.x?1:-1)*.8;t.p
 
 for(const g of sigs){
 const ln=g.z+8,gd=zz-ln;
+if(g.rail&&g.train.visible&&hitCd<=0&&Math.abs(zz-g.z)<2.5&&Math.abs(g.train.position.x-xx)<8){speed=0;hits++;hitCd=1.5;shake=.6;say(T('hit'),1500);}
 if(gd>0&&gd<40&&g.m!=='G'&&speed>6&&!g.warned){g.warned=true;say(T('sigw'),1800);}
 if(gd>70)g.warned=false;
 if(pz0>ln&&zz<=ln&&g.m==='R'&&speed>1.5){viol++;cash-=500;shake=.3;say(T('red'),3000);}
 }
 pz0=zz;
+while(ptI<ptz.length&&zz<=ptz[ptI].z){say('📍 '+(lang==='bn'?ptz[ptI].bn:ptz[ptI].en),2500);ptI++;}
 for(const c of cross){
 const u=c.userData;
 if(Math.abs(c.position.z-zz)>350)continue;
@@ -812,12 +956,14 @@ $('fi').style.width=fuel+'%';$('fi').style.background=fuel<15?'#ef4444':'#22c55e
 const nx=stops.find(s=>!s.done);
 $('st').textContent=T('fuel')+' '+Math.round(fuel)+'%  ·  '+T('cash')+' '+Math.round(cash)+'  ·  '+(veh==='bike'?T('parc')+' '+carried:T('pax')+' '+pax+'/'+CAP());
 const nf=fuels.find(z=>z<zz+10);
-$('rt').textContent=(nx?T('next')+': '+nx.n[li()]+' ('+Math.max(0,Math.round(Math.abs(zz-nx.z)*SC/1000))+' '+T('left')+')':'')+(nf!==undefined?'\n'+T('fst')+': '+Math.round(Math.abs(zz-nf)*SC/1000)+' '+T('left'):'')+(bell.on?'\n🔔 '+T('bellq')+': '+bell.stop.nm[li()]+' ('+(Math.abs(zz-bell.stop.z)*SC/1000).toFixed(1)+' '+T('left')+')':'');
+const np=ptz[ptI];
+$('rt').textContent=(np?'📍 '+(np.t==='S'||np.t==='L'?'🚏 ':'')+(lang==='bn'?np.bn:np.en)+' (~'+Math.max(0,Math.round(Math.abs(zz-np.z)*SC/1000))+' '+T('left')+')':'')+(nf!==undefined?'\n'+T('fst')+': '+Math.round(Math.abs(zz-nf)*SC/1000)+' '+T('left'):'')+(bell.on?'\n🔔 '+T('bellq')+': '+bell.stop.nm[li()]+' ('+(Math.abs(zz-bell.stop.z)*SC/1000).toFixed(1)+' '+T('left')+')':'');
 }
 }
 function audioHush(){if(en)en.g.gain.value=0;if(hornO)hornO.gain.value=0;}
 
 applyLang();showMenu('');
+if(!SV.seen){SV.seen=1;save();say(T('hello'),8000);}
 let last=performance.now(),T1=0,chk=0,fAcc=0,fN=0;
 function checkShaders(){
 if(bendOff)return;
@@ -849,4 +995,4 @@ document.getElementById('menu').appendChild(b);
 });
 </script>
 </body>
-                                                                              </html>
+                                                                                                                                                                                                               </html>
