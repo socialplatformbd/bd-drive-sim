@@ -7,6 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script src="config.js"></script>
 <title>বাংলাদেশ বাস রুট সিম</title>
 <style>html{font-size:calc(16px*var(--s,1));-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
@@ -17,11 +18,11 @@ html,body{height:100%;margin:0;background:#0b1220;overflow:hidden;touch-action:n
 canvas{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
 .h{position:fixed;z-index:5;color:var(--fg);background:var(--hud);border-radius:.75rem;padding:.375rem .625rem;font-size:.8125rem;line-height:1.4}
 button{font:inherit;font-size:.8125rem;background:var(--hud);color:var(--fg);border:.125rem solid transparent;border-radius:.625rem;padding:.5rem .625rem}
-#info{top:calc(env(safe-area-inset-top,0rem) + .5rem);left:.5rem;max-width:52%}
+#info{top:calc(env(safe-area-inset-top,0rem) + 1rem);left:.5rem;max-width:52%}
 #spd{font-size:1.75rem;font-weight:700}
 #fb{height:.5rem;background:#444;border-radius:.25rem;margin:.1875rem 0;overflow:hidden}
 #fi{display:block;height:100%;width:70%;background:#22c55e}
-#tr{position:fixed;z-index:5;top:calc(env(safe-area-inset-top,0rem) + .5rem);right:.5rem;display:flex;gap:.375rem;flex-wrap:wrap;justify-content:flex-end;max-width:44%}
+#tr{position:fixed;z-index:5;top:calc(env(safe-area-inset-top,0rem) + 1rem);right:.5rem;display:flex;gap:.375rem;flex-wrap:wrap;justify-content:flex-end;max-width:44%}
 #toast{top:calc(env(safe-area-inset-top,0rem) + 8.75rem);left:50%;transform:translateX(-50%);opacity:0;transition:opacity .4s;pointer-events:none;text-align:center;width:max-content;max-width:86%;font-size:.9375rem}
 #toast.show{opacity:1}
 .pad{position:fixed;z-index:5;bottom:calc(env(safe-area-inset-bottom,0rem) + .875rem);display:flex;gap:.625rem}
@@ -41,6 +42,16 @@ button{font:inherit;font-size:.8125rem;background:var(--hud);color:var(--fg);bor
 #rl button{background:#1d4ed8;padding:.75rem .5rem;font-size:.875rem}
 #lg{margin-top:.375rem;background:#334155}
 #rt{white-space:pre-line}
+#pg{display:none;position:fixed;z-index:6;left:0;right:0;top:env(safe-area-inset-top,0rem);height:.5rem;background:rgba(10,16,28,.7);pointer-events:none}
+#pgf{position:absolute;left:0;top:0;bottom:0;width:0;background:#22c55e}
+.pd{position:absolute;top:50%;width:.4rem;height:.4rem;margin:-.2rem 0 0 -.2rem;border-radius:50%;background:#fff}
+.pd.s{width:.55rem;height:.55rem;margin:-.275rem 0 0 -.275rem;background:#fde047}
+#pgm{position:absolute;top:50%;width:.8rem;height:.8rem;margin:-.4rem 0 0 -.4rem;border-radius:50%;background:#ef4444;border:.125rem solid #fff}
+#tut{position:fixed;left:0;top:0;right:0;bottom:0;z-index:25;background:rgba(5,10,20,.94);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1rem;text-align:left;overflow-y:auto;touch-action:pan-y}
+#tut ul{max-width:30rem;margin:.5rem 0;padding-left:1.2rem;font-size:.9rem;line-height:1.6}
+#tut button{background:#16a34a;font-weight:700;padding:.6rem 1.4rem}
+#sh{display:none;margin:.5rem auto;background:#7c3aed;font-weight:700}
+#hlp{margin-top:.5rem}
 #toast{z-index:30}
 #sum{white-space:pre-line}
 #own{color:#cbd5e1;font-size:.8125rem;margin-bottom:.25rem}
@@ -61,6 +72,20 @@ button{font:inherit;font-size:.8125rem;background:var(--hud);color:var(--fg);bor
 #act{position:fixed;z-index:6;bottom:calc(env(safe-area-inset-bottom,0rem) + 5.75rem);left:50%;transform:translateX(-50%);display:none;background:#1d4ed8;border:.125rem solid #fff;font-size:.9375rem;font-weight:700;padding:.625rem .875rem;max-width:56%}
 #rv{position:fixed;z-index:5;bottom:calc(env(safe-area-inset-bottom,0rem) + 5.375rem);right:.75rem;width:3.5rem;height:3.5rem;border-radius:50%;padding:0;font-size:.75rem;font-weight:700;touch-action:none;border:.125rem solid rgba(255,255,255,.35)}
 #rv.on{background:#38bdf8;color:#082f49}
+#stb{background:#0369a1;margin-top:.4rem}
+.oh{color:#fde68a;font-size:.85rem;margin:.5rem 0 .2rem}
+#opt{display:none;max-width:26rem;margin:.4rem auto;text-align:left}
+#tk{display:none;position:fixed;z-index:5;left:0;right:0;top:calc(env(safe-area-inset-top,0rem) + .75rem);height:1.5rem;background:#1e3a8a;color:#fff;overflow:hidden;white-space:nowrap;border-top:.1rem solid #f59e0b;border-bottom:.1rem solid #f59e0b;pointer-events:none}
+#tkt{display:inline-block;padding-left:100%;font-size:.85rem;line-height:1.5rem}
+@keyframes tkm{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+body.tkon #info,body.tkon #tr{top:calc(env(safe-area-inset-top,0rem) + 2.6rem)}
+#dmg{display:none;color:#fde047;font-size:.95rem}
+#wrc{display:none;margin-top:.2rem;background:#22d3ee;color:#083344;border-radius:1rem;padding:.1rem .6rem;font-size:.8rem;font-weight:700}
+#fun{display:none;position:fixed;z-index:5;right:.75rem;bottom:calc(env(safe-area-inset-bottom,0rem) + 9.6rem);gap:.5rem}
+#fun button{width:3.6rem;height:3.6rem;border-radius:50%;font-size:.7rem;font-weight:700;padding:0;touch-action:none;border:.125rem solid rgba(255,255,255,.4)}
+#sb{background:rgba(220,60,60,.85)}
+#tb{background:rgba(234,150,20,.9)}
+#tb.on{background:#fde047;color:#422006}
 </style>
 <script>
 (function(){
@@ -76,7 +101,7 @@ if(/[?&]icons=1/.test(location.search)){
 window.addEventListener('load',function(){
 var o=document.createElement('div');
 o.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:99;background:#0b1220;color:#fff;padding:20px;text-align:center;font-family:sans-serif;overflow:auto';
-o.innerHTML='<h2>\u0986\u0987\u0995\u09a8 \u09a1\u09be\u0989\u09a8\u09b2\u09cb\u09a1 / Icon download</h2><p>\u09a8\u09bf\u099a\u09c7\u09b0 \u09a6\u09c1\u099f\u09cb \u09ac\u09be\u099f\u09a8 \u099a\u09be\u09aa\u09c1\u09a8, \u09ab\u09be\u0987\u09b2 \u09a1\u09be\u0989\u09a8\u09b2\u09cb\u09a1\u09c7 \u09b8\u09c7\u09ad \u09b9\u09ac\u09c7</p>';
+o.innerHTML='<h2>Icon download</h2><p>Tap both buttons, files will be saved in Downloads</p>';
 [192,512].forEach(function(n){var c=draw(n),a=document.createElement('a');
 a.textContent='icon-'+n+'.png';a.download='icon-'+n+'.png';a.href=c.toDataURL('image/png');
 a.style.cssText='display:block;margin:14px auto;padding:14px;background:#16a34a;color:#fff;border-radius:10px;max-width:320px;text-decoration:none;font-weight:700';
@@ -87,14 +112,18 @@ document.body.appendChild(o);});
 </script>
 </head>
 <body>
-<div id="info" class="h"><span id="spd">0</span> <span data-i="kmh"></span><div id="fb"><i id="fi"></i></div><span id="st"></span><br><span id="gr"></span><br><span id="rt"></span></div>
+<div id="pg"><i id="pgf"></i><i id="pgm"></i></div>
+<div id="info" class="h"><span id="spd">0</span> <span data-i="kmh"></span><div id="fb"><i id="fi"></i></div><span id="st"></span><br><span id="gr"></span><br><span id="rt"></span><br><b id="dmg"></b><b id="wrc"></b></div>
 <div id="tr"><button id="cam"></button><button id="am"></button><button id="snd">🔊</button><button id="lang"></button><button id="mn">☰</button></div>
+<div id="tk"><span id="tkt"></span></div>
+<div id="fun"><button id="sb"></button><button id="tb"></button></div>
 <div id="toast" class="h"></div>
 <button id="emg" data-i="emg"></button><button id="act"></button><button id="rv" data-i="rev"></button>
 <div id="gp"><button id="gd">▼</button><div id="gn">1</div><button id="gu">▲</button></div>
 <div id="lc" class="pad"><button id="bl">◀</button><button id="br">▶</button></div>
 <div id="rc" class="pad"><button id="hn" data-i="horn"></button><button id="bk" data-i="brk"></button><button id="gs" data-i="gas"></button></div>
-<div id="menu"><h1 data-i="title"></h1><div id="own" data-i="made"></div><a id="tg" class="tg" data-i="join" href="https://t.me/onlinebdbussimulator" target="_blank" rel="noopener"></a><div id="sum"></div><div id="wl"></div><button id="gb"></button><div id="gar"></div><div id="vv" class="chips"></div><div id="lv"></div><div id="tv" class="chips"></div><div id="wv" class="chips"></div><div id="gv" class="chips"></div><div id="rl"></div><button id="lg"></button></div>
+<div id="tut"><h2 data-i="tuth"></h2><ul id="tutl"></ul><button id="tutok" data-i="tutok"></button></div>
+<div id="menu"><h1 data-i="title"></h1><div id="own" data-i="made"></div><a id="tg" class="tg" data-i="join" href="https://t.me/onlinebdbussimulator" target="_blank" rel="noopener"></a><button id="sh" data-i="share"></button><div id="sum"></div><div id="wl"></div><button id="gb"></button><div id="gar"></div><button id="stb" data-i="stg"></button><div id="opt"></div><div id="vv" class="chips"></div><div id="lv"></div><div id="tv" class="chips"></div><div id="wv" class="chips"></div><div id="gv" class="chips"></div><div id="rl"></div><button id="lg"></button><button id="hlp" data-i="help"></button></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -108,9 +137,16 @@ if(typeof THREE==='undefined'){$('menu').textContent='3D library failed to load 
 
 /* ---------- ভাষা ---------- */
 const S={
-bn:{title:'🚌 বাংলাদেশ বাস রুট সিম',pick:'বাসের রং ও রুট বেছে নিন',kmh:'কিমি/ঘণ্টা',gas:'গ্যাস ▲',brk:'ব্রেক',horn:'📢 হর্ন',ci:'ককপিট',co:'বাইরে',fuel:'ফুয়েল',cash:'টাকা',pax:'যাত্রী',next:'পরের স্টপ',left:'কিমি',low:'⛽ ফুয়েল কম! পরের ফুয়েল স্টেশনে বাঁ পাশে থামুন',nof:'ফুয়েল শেষ! জরুরি ফুয়েল নিন',emg:'⛽ জরুরি ফুয়েল (৮০০ টাকা)',refu:'⛽ ফুয়েল ভরা হচ্ছে…',board:'🧍 যাত্রী উঠছে…',boarded:'যাত্রী উঠেছে',hit:'ধাক্কা!',hint:'সবুজ স্টপে বাস থামিয়ে নিচের নীল বাটন চাপুন। ফুয়েল স্টেশনেও একইভাবে',arr:'🎉 গন্তব্যে পৌঁছেছেন!',time:'সময়',hits:'ধাক্কা',again:'আবার চালান',en:'English',stopn:'স্টপ',rev:'⏪ পিছে',actb:'🧍 যাত্রী নামান/উঠান',acte:'🏁 যাত্রী নামিয়ে শেষ করুন',actf:'⛽ ফুয়েল ভরুন',alt:'নামলো',brd:'উঠলো',stopnow:'বাসটি থামান, তারপর বাটন চাপুন',fst:'⛽ ফুয়েল স্টেশন',gear:'গিয়ার',auto:'⚙ অটো',man:'⚙ ম্যানুয়াল',upsh:'⬆ গিয়ার বাড়ান',lug:'ইঞ্জিন টানছে না, নিচের গিয়ারে যান',morn:'সকাল',noon:'দুপুর',eve:'সন্ধ্যা',night:'রাত',clr:'পরিষ্কার',rn:'বৃষ্টি',fg:'কুয়াশা',wallet:'ওয়ালেট',garage:'🔧 গ্যারেজ (আপগ্রেড)',up_e:'ইঞ্জিন',up_f:'ফুয়েল ট্যাংক',up_t:'টায়ার ও ব্রেক',up_s:'আসন (যাত্রী)',max:'সর্বোচ্চ',buy:'কিনুন',nomoney:'ওয়ালেটে টাকা কম',bought:'✔ আপগ্রেড হয়েছে!',bonus:'বোনাস',rating:'রেটিং',trips:'ট্রিপ',rst:'সেভ মুছুন',rstq:'আবার চাপলে সব সেভ মুছে যাবে',bell:'🔔 যাত্রী নামতে চায়! পরের লোকাল স্টপে থামুন',bellq:'নামবে',missed:'😠 স্টপ মিস! রেটিং কমেছে',actl:'🧍 নামান/উঠান',red:'🚨 লাল বাতি ভাঙলেন! জরিমানা ৫০০ টাকা',sigw:'🚦 সামনে লাল বাতি, থামুন',bus:'বাস',bike:'বাইক',actd:'📦 পার্সেল ডেলিভারি',delv:'📦 ডেলিভারি হচ্ছে…',acte2:'🏁 ট্রিপ শেষ করুন',parc:'পার্সেল',glow:'গ্রাফিক্স কম',gmed:'গ্রাফিক্স মাঝারি',ghigh:'গ্রাফিক্স ভালো',gfxdown:'ফোন ধীর হচ্ছিল, গ্রাফিক্স কমানো হয়েছে',made:'তৈরি করেছেন: Mohammad Rakib',join:'📨 টেলিগ্রাম গ্রুপে যুক্ত হয়ে মতামত দিন',fb:'গেমটা কেমন লাগল? আর কী আপডেট চান? টেলিগ্রাম গ্রুপে জানান 👇',hello:'👋 গেমটা Mohammad Rakib-এর তৈরি। ভালো লাগলে টেলিগ্রাম গ্রুপে মতামত দিন'},
-en:{title:'🚌 Bangladesh Bus Route Sim',pick:'Choose bus colour and route',kmh:'km/h',gas:'Gas ▲',brk:'Brake',horn:'📢 Horn',ci:'Cockpit',co:'Outside',fuel:'Fuel',cash:'Tk',pax:'Passengers',next:'Next stop',left:'km',low:'⛽ Low fuel! Pull in at the station on the left',nof:'Out of fuel! Get emergency fuel',emg:'⛽ Emergency fuel (800 Tk)',refu:'⛽ Refuelling…',board:'🧍 Passengers boarding…',boarded:'Passengers boarded',hit:'Crash!',hint:'Stop on the green bay and tap the blue button. Same at fuel stations',arr:'🎉 You have arrived!',time:'Time',hits:'Crashes',again:'Drive again',en:'বাংলা',stopn:'Stop',rev:'⏪ Rev',actb:'🧍 Drop off / pick up',acte:'🏁 Drop everyone and finish',actf:'⛽ Fill tank',alt:'Got off',brd:'Got on',stopnow:'Stop the bus, then tap the button',fst:'⛽ Fuel station',gear:'Gear',auto:'⚙ Auto',man:'⚙ Manual',upsh:'⬆ Shift up',lug:'Engine is lugging, shift down',morn:'Morning',noon:'Noon',eve:'Evening',night:'Night',clr:'Clear',rn:'Rain',fg:'Fog',wallet:'Wallet',garage:'🔧 Garage (upgrades)',up_e:'Engine',up_f:'Fuel tank',up_t:'Tyres and brakes',up_s:'Seats (passengers)',max:'Max',buy:'Buy',nomoney:'Not enough money',bought:'✔ Upgraded!',bonus:'Bonus',rating:'Rating',trips:'Trips',rst:'Reset save',rstq:'Tap again to erase all progress',bell:'🔔 A passenger wants to get off! Stop at the next local stop',bellq:'Getting off',missed:'😠 Missed the stop! Rating drops',actl:'🧍 Drop off / pick up',red:'🚨 You ran a red light! Fine 500 Tk',sigw:'🚦 Red light ahead, stop',bus:'Bus',bike:'Bike',actd:'📦 Deliver parcel',delv:'📦 Delivering…',acte2:'🏁 Finish trip',parc:'Parcels',glow:'Graphics: low',gmed:'Graphics: medium',ghigh:'Graphics: high',gfxdown:'Phone was slow, graphics lowered',made:'Made by Mohammad Rakib',join:'📨 Join the Telegram group and give feedback',fb:'How did you like the game? What should we add next? Tell us in the Telegram group 👇',hello:'👋 This game is made by Mohammad Rakib. Share your feedback in the Telegram group'}
+bn:{title:'🚌 বাংলাদেশ বাস রুট সিম',pick:'বাসের রং ও রুট বেছে নিন',kmh:'কিমি/ঘণ্টা',gas:'গ্যাস ▲',brk:'ব্রেক',horn:'📢 হর্ন',ci:'ককপিট',co:'বাইরে',fuel:'ফুয়েল',cash:'টাকা',pax:'যাত্রী',next:'পরের স্টপ',left:'কিমি',low:'⛽ ফুয়েল কম! পরের ফুয়েল স্টেশনে বাঁ পাশে থামুন',nof:'ফুয়েল শেষ! জরুরি ফুয়েল নিন',emg:'⛽ জরুরি ফুয়েল (৮০০ টাকা)',refu:'⛽ ফুয়েল ভরা হচ্ছে…',board:'🧍 যাত্রী উঠছে…',boarded:'যাত্রী উঠেছে',hit:'ধাক্কা!',hint:'সবুজ স্টপে বাস থামিয়ে নিচের নীল বাটন চাপুন। ফুয়েল স্টেশনেও একইভাবে',arr:'🎉 গন্তব্যে পৌঁছেছেন!',time:'সময়',hits:'ধাক্কা',again:'আবার চালান',en:'English',stopn:'স্টপ',rev:'⏪ পিছে',actb:'🧍 যাত্রী নামান/উঠান',acte:'🏁 যাত্রী নামিয়ে শেষ করুন',actf:'⛽ ফুয়েল ভরুন',alt:'নামলো',brd:'উঠলো',stopnow:'বাসটি থামান, তারপর বাটন চাপুন',fst:'⛽ ফুয়েল স্টেশন',gear:'গিয়ার',auto:'⚙ অটো',man:'⚙ ম্যানুয়াল',upsh:'⬆ গিয়ার বাড়ান',lug:'ইঞ্জিন টানছে না, নিচের গিয়ারে যান',morn:'সকাল',noon:'দুপুর',eve:'সন্ধ্যা',night:'রাত',clr:'পরিষ্কার',rn:'বৃষ্টি',fg:'কুয়াশা',wallet:'ওয়ালেট',garage:'🔧 গ্যারেজ (আপগ্রেড)',up_e:'ইঞ্জিন',up_f:'ফুয়েল ট্যাংক',up_t:'টায়ার ও ব্রেক',up_s:'আসন (যাত্রী)',max:'সর্বোচ্চ',buy:'কিনুন',nomoney:'ওয়ালেটে টাকা কম',bought:'✔ আপগ্রেড হয়েছে!',bonus:'বোনাস',rating:'রেটিং',trips:'ট্রিপ',rst:'সেভ মুছুন',rstq:'আবার চাপলে সব সেভ মুছে যাবে',bell:'🔔 যাত্রী নামতে চায়! পরের লোকাল স্টপে থামুন',bellq:'নামবে',missed:'😠 স্টপ মিস! রেটিং কমেছে',actl:'🧍 নামান/উঠান',red:'🚨 লাল বাতি ভাঙলেন! জরিমানা ৫০০ টাকা',sigw:'🚦 সামনে লাল বাতি, থামুন',bus:'বাস',bike:'বাইক',actd:'📦 পার্সেল ডেলিভারি',delv:'📦 ডেলিভারি হচ্ছে…',acte2:'🏁 ট্রিপ শেষ করুন',parc:'পার্সেল',glow:'গ্রাফিক্স কম',gmed:'গ্রাফিক্স মাঝারি',ghigh:'গ্রাফিক্স ভালো',gfxdown:'ফোন ধীর হচ্ছিল, গ্রাফিক্স কমানো হয়েছে',made:'তৈরি করেছেন: Mohammad Rakib',join:'📨 টেলিগ্রাম গ্রুপে যুক্ত হয়ে মতামত দিন',fb:'গেমটা কেমন লাগল? আর কী আপডেট চান? টেলিগ্রাম গ্রুপে জানান 👇',hello:'👋 গেমটা Mohammad Rakib-এর তৈরি। ভালো লাগলে টেলিগ্রাম গ্রুপে মতামত দিন',tuth:'🚌 কীভাবে খেলবেন',tutok:'বুঝেছি, শুরু করি',help:'❓ খেলার গাইড',share:'📤 ফলাফল শেয়ার করুন',copied:'কপি হয়েছে, এবার যেকোনো জায়গায় পেস্ট করে পাঠান',sat:'যাত্রী সন্তুষ্টি',tips:'টিপস',
+t1:'◀ ▶ দিয়ে ঘুরান। ডানে নিচে গ্যাস, ব্রেক আর 📢 হর্ন। ⏪ দিয়ে পিছনে যান। হর্ন দিলে সামনের গাড়ি সরে জায়গা দেয়।',t2:'বাঁয়ে নিচে ▲▼ দিয়ে গিয়ার বদলান, অথবা ওপরের ⚙ বাটনে অটো করুন।',t3:'সবুজ বা হালকা সবুজ স্টপে বাঁ পাশে থামুন, তারপর নীল বাটন চাপলে যাত্রী নামে-ওঠে। 🔔 বাজলে পরের লোকাল স্টপে থামুন।',t4:'ফুয়েল কমলে ফুয়েল স্টেশনের পাশে থেমে ⛽ বাটন চাপুন।',t5:'🚦 লাল বাতি ও রেল ক্রসিংয়ে থামুন, নইলে জরিমানা ও রেটিং কমবে।',t6:'ওপরের লাইনে আপনার বাস (লাল বিন্দু) আর স্টপগুলো (সাদা-হলুদ বিন্দু) দেখা যায়।',t7:'😊 যাত্রী সন্তুষ্টি ধরে রাখুন: হঠাৎ ব্রেক, ধাক্কা আর বাঁকে দ্রুত গতি এড়ান। বেশি সন্তুষ্ট হলে বেশি টিপস।'},
+en:{title:'🚌 Bangladesh Bus Route Sim',pick:'Choose bus colour and route',kmh:'km/h',gas:'Gas ▲',brk:'Brake',horn:'📢 Horn',ci:'Cockpit',co:'Outside',fuel:'Fuel',cash:'Tk',pax:'Passengers',next:'Next stop',left:'km',low:'⛽ Low fuel! Pull in at the station on the left',nof:'Out of fuel! Get emergency fuel',emg:'⛽ Emergency fuel (800 Tk)',refu:'⛽ Refuelling…',board:'🧍 Passengers boarding…',boarded:'Passengers boarded',hit:'Crash!',hint:'Stop on the green bay and tap the blue button. Same at fuel stations',arr:'🎉 You have arrived!',time:'Time',hits:'Crashes',again:'Drive again',en:'বাংলা',stopn:'Stop',rev:'⏪ Rev',actb:'🧍 Drop off / pick up',acte:'🏁 Drop everyone and finish',actf:'⛽ Fill tank',alt:'Got off',brd:'Got on',stopnow:'Stop the bus, then tap the button',fst:'⛽ Fuel station',gear:'Gear',auto:'⚙ Auto',man:'⚙ Manual',upsh:'⬆ Shift up',lug:'Engine is lugging, shift down',morn:'Morning',noon:'Noon',eve:'Evening',night:'Night',clr:'Clear',rn:'Rain',fg:'Fog',wallet:'Wallet',garage:'🔧 Garage (upgrades)',up_e:'Engine',up_f:'Fuel tank',up_t:'Tyres and brakes',up_s:'Seats (passengers)',max:'Max',buy:'Buy',nomoney:'Not enough money',bought:'✔ Upgraded!',bonus:'Bonus',rating:'Rating',trips:'Trips',rst:'Reset save',rstq:'Tap again to erase all progress',bell:'🔔 A passenger wants to get off! Stop at the next local stop',bellq:'Getting off',missed:'😠 Missed the stop! Rating drops',actl:'🧍 Drop off / pick up',red:'🚨 You ran a red light! Fine 500 Tk',sigw:'🚦 Red light ahead, stop',bus:'Bus',bike:'Bike',actd:'📦 Deliver parcel',delv:'📦 Delivering…',acte2:'🏁 Finish trip',parc:'Parcels',glow:'Graphics: low',gmed:'Graphics: medium',ghigh:'Graphics: high',gfxdown:'Phone was slow, graphics lowered',made:'Made by Mohammad Rakib',join:'📨 Join the Telegram group and give feedback',fb:'How did you like the game? What should we add next? Tell us in the Telegram group 👇',hello:'👋 This game is made by Mohammad Rakib. Share your feedback in the Telegram group',tuth:'🚌 How to play',tutok:'Got it, let us start',help:'❓ How to play',share:'📤 Share my result',copied:'Copied, paste it anywhere to send',sat:'Passenger satisfaction',tips:'Tips',
+t1:'Steer with ◀ ▶. Gas, brake and 📢 horn are at the bottom right. ⏪ goes backwards. Honking makes cars ahead move aside.',t2:'Change gears with ▲▼ at the bottom left, or switch to ⚙ Auto at the top.',t3:'Stop on the green bay at the left, then tap the blue button to drop off and pick up passengers. When 🔔 rings, stop at the next local stop.',t4:'When fuel is low, stop beside a fuel station and tap the ⛽ button.',t5:'Stop at 🚦 red lights and rail crossings, or you get fined and lose rating.',t6:'The line at the top shows your bus (red dot) and the stops (white and yellow dots).',t7:'😊 Keep passengers happy: avoid hard braking, crashes and fast corners. Happier passengers pay more tips.'}
 };
+const FS={
+bn:{stg:'⚙ সেটিংস',funh:'😂 ফানি অপশন (আলাদা, যখন খুশি চালু-বন্ধ করুন)',o_tk:'📰 খবরের ফিতা (মজার শিরোনাম)',o_dm:'💸 জাতীয় ক্ষতি কাউন্টার',o_sb:'💣 শব্দবোমা বাটন',o_tb:'⚡ টার্বো "টান" বাটন',o_wr:'↔ উল্টো পথে ক্ষতি ×২',o_sp:'💬 মজার কথা (হেলপার/যাত্রী)',o_all:'সবগুলো চালু/বন্ধ',fon:'চালু',foff:'বন্ধ',sbl:'শব্দবোমা',tbl:'টান',sbm:'💥 শব্দবোমা!',dmgl:'জাতীয় ক্ষতি',wrt:'↔ উল্টো পথ · ক্ষতি ×২',n_crash:'ধাক্কা! জাতীয় ক্ষতি আরও বাড়ল',n_red:'লাল বাতিকে "কমলা" ভেবে পার হলেন চালক',n_miss:'স্টপ মিস, যাত্রীর "হায় হায়"',n_bomb:'শব্দবোমায় কেঁপে উঠল গোটা হাইওয়ে',n_turbo:'বাসের "টান", ঘুম ভাঙল ঘুমন্ত যাত্রীদের'},
+en:{stg:'⚙ Settings',funh:'😂 Fun options (separate, switch on or off any time)',o_tk:'📰 News ticker (funny headlines)',o_dm:'💸 National damage counter',o_sb:'💣 Sound bomb button',o_tb:'⚡ Turbo boost button',o_wr:'↔ Wrong lane doubles damage',o_sp:'💬 Funny lines (helper and passengers)',o_all:'Switch all on/off',fon:'On',foff:'Off',sbl:'Bomb',tbl:'Turbo',sbm:'💥 Sound bomb!',dmgl:'National damage',wrt:'↔ Wrong lane · damage ×2',n_crash:'Crash! National damage rises again',n_red:'Driver mistook the red light for orange',n_miss:'Stop missed, passenger cries out',n_bomb:'Sound bomb shakes the whole highway',n_turbo:'Bus goes turbo, sleeping passengers wake up'}
+};
+Object.assign(S.bn,FS.bn);Object.assign(S.en,FS.en);
 let lang='bn';try{lang=localStorage.getItem('l2')||'bn';}catch(e){}
 if(!S[lang])lang='bn';
 const T=k=>S[lang][k],li=()=>lang==='bn'?0:1;
@@ -701,8 +737,91 @@ if(hornF){hornF[0].frequency.value=bk?560:349;hornF[1].frequency.value=bk?680:44
 if(rainG)rainG.gain.setTargetAtTime(muted||weather!=='rain'?0:.06,t,.3);
 }
 
+/* ---------- ফানি অপশন (সেটিংসে চালু-বন্ধ, ডিফল্ট বন্ধ) ---------- */
+const FK=[['tk','o_tk'],['dm','o_dm'],['sb','o_sb'],['tb','o_tb'],['wr','o_wr'],['sp','o_sp']];
+let FUN={tk:0,dm:0,sb:0,tb:0,wr:0,sp:0};
+if(SV.fun)FK.forEach(k=>{FUN[k[0]]=SV.fun[k[0]]?1:0;});
+let dmg=0,dmHits=0,dmViol=0,dmMiss=0,wrongT=0,wrong=false,sbCd=0,tbCh=100,tbOn=false,newsT=6,lastQ=-99,optOpen=false;
+const NEWS={
+bn:['বাসের সামনে গরু, জাতি স্তম্ভিত','চালকের দাবি: ব্রেক ছিল, পা ছিল না','জ্যামে আটকে পাশের রিকশাওয়ালা আগে পৌঁছে গেলেন','যাত্রী বললেন "আস্তে চালান", চালক শুনলেন "জোরে চালান"','হর্ন দিয়ে গোটা এলাকা জাগিয়ে দিলেন চালক','ফুয়েল শেষ, চালক বললেন "ঠেলে নিই"','ওভারটেক করতে গিয়ে ট্রাকের সাথে চোখাচোখি, দুজনেই চমকালেন','হেলপারের গলা ভেঙে গেল "সামনে আগান" বলতে বলতে','বাসের ছাদে আজ শুধু বাতাস যাত্রী','রাস্তার মোড়ে চা-ওয়ালার কাছে বিক্রি রেকর্ড'],
+en:['Cow stands in front of bus, nation stunned','Driver claims brakes were there, foot was not','Stuck in traffic, rickshaw wala reaches first','Passenger said "slow down", driver heard "speed up"','Driver wakes up the whole area with the horn','Out of fuel, driver says "let us push it"','Overtake ends in a staring contest with a truck','Bus helper loses voice shouting "move forward"','Only wind rides on the bus roof today','Tea seller at the junction breaks sales record']
+};
+const QP={
+bn:{crash:['হেলপার: ধপাস! সবাই ঠিক আছেন তো?','যাত্রী: ভাই, চোখ কই ছিল?!'],miss:['যাত্রী: আমার স্টপ গেল গা!','যাত্রী: মামা, আমার তো নামার কথা ছিল!'],brake:['যাত্রী: আরে ভাই, আস্তে!','যাত্রী: আমার চা পড়ে গেল!'],bomb:['হেলপার: কানে তুলা দিয়ে রাখো!','যাত্রী: ভাই, কানের পর্দা গেল!'],turbo:['যাত্রী: ভাই, প্লেন চালাচ্ছেন নাকি?','হেলপার: ধরো ধরো, উড়ে যাচ্ছি!'],start:['হেলপার: সামনে আগান, পিছনে অনেক জায়গা!']},
+en:{crash:['Helper: Thud! Is everyone alright?','Passenger: Brother, where were your eyes?!'],miss:['Passenger: My stop is gone!','Passenger: Uncle, I was supposed to get off!'],brake:['Passenger: Hey, slowly!','Passenger: My tea spilled!'],bomb:['Helper: Put cotton in your ears!','Passenger: My eardrums!'],turbo:['Passenger: Are you flying a plane?','Helper: Hold on, we are taking off!'],start:['Helper: Move forward, lots of space at the back!']}
+};
+function news(k){
+const tx=(lang==='bn'?'সর্বশেষ: ':'Latest: ')+(k?T(k):rnd(NEWS[lang])),el=$('tkt'),dur=Math.max(11,tx.length*.28);
+el.textContent=tx;el.style.animation='none';void el.offsetWidth;el.style.animation='tkm '+dur+'s linear forwards';
+newsT=dur+6+Math.random()*6;
+}
+function quip(kind){if(tm-lastQ<9)return;lastQ=tm;say(rnd(QP[lang][kind]),2600);}
+function boom(){
+if(!AC||muted)return;
+const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
+o.type='sawtooth';o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(30,t+.7);
+g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.8);
+o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.85);
+}
+function bomb(){
+if(!FUN.sb||state!=='play'||sbCd>0)return;
+sbCd=12;boom();shake=.6;sat=Math.max(0,sat-3);
+const z=P.position.z;
+traffic.forEach(t=>{if(t.visible&&Math.abs(t.position.z-z)<80){t.userData.yl=3.5;t.userData.hop=.9;}});
+say(T('sbm'),1800);if(FUN.tk)news('n_bomb');if(FUN.sp)quip('bomb');
+}
+function funPhys(dt,on){
+if(FUN.tb&&inp.tb&&tbCh>0&&on&&gear>=1&&speed>=0){
+speed=Math.min(speed+CFG.acc*1.8*dt,CFG.max*1.35);tbCh=Math.max(0,tbCh-dt*22);shake=Math.max(shake,.05);
+if(!tbOn){tbOn=true;if(FUN.sp)quip('turbo');if(FUN.tk)news('n_turbo');}
+}else{tbOn=false;tbCh=Math.min(100,tbCh+dt*8);}
+}
+function funTick(dt){
+if(sbCd>0)sbCd-=dt;
+if(speed>3&&P.position.x>.8)wrongT+=dt;else wrongT=0;
+wrong=FUN.wr&&wrongT>1.2;
+if(hits>dmHits){const n=hits-dmHits;dmHits=hits;dmg+=Math.round((600+Math.random()*1900)*n*(wrong?2:1));if(FUN.tk)news('n_crash');if(FUN.sp)quip('crash');}
+if(viol>dmViol){dmViol=viol;dmg+=500;if(FUN.tk)news('n_red');}
+if(missed>dmMiss){dmMiss=missed;if(FUN.tk)news('n_miss');if(FUN.sp)quip('miss');}
+if(FUN.sp&&inp.b&&speed>16)quip('brake');
+if(FUN.tk){newsT-=dt;if(newsT<=0)news(null);}
+}
+function funHud(){
+if(FUN.dm)$('dmg').textContent='💸 '+T('dmgl')+' ৳'+dmg.toLocaleString(lang==='bn'?'bn-BD':'en-US');
+if(FUN.wr)$('wrc').style.display=wrong?'inline-block':'none';
+if(FUN.sb)$('sb').textContent=sbCd>0?'💣 '+Math.ceil(sbCd):'💣 '+T('sbl');
+if(FUN.tb){$('tb').textContent='⚡ '+Math.round(tbCh)+'%';$('tb').classList.toggle('on',tbOn);}
+}
+function applyFun(){
+$('tk').style.display=FUN.tk?'block':'none';document.body.classList.toggle('tkon',!!FUN.tk);
+$('dmg').style.display=FUN.dm?'block':'none';
+$('wrc').style.display='none';$('wrc').textContent=T('wrt');
+$('sb').style.display=FUN.sb?'block':'none';$('tb').style.display=FUN.tb?'block':'none';
+$('fun').style.display=(FUN.sb||FUN.tb)?'flex':'none';
+}
+function funStart(){
+dmg=0;dmHits=hits;dmViol=viol;dmMiss=missed;wrongT=0;wrong=false;sbCd=0;tbCh=100;tbOn=false;newsT=5;lastQ=-99;
+applyFun();if(FUN.tk)news(null);if(FUN.sp)quip('start');
+}
+function renderOpt(){
+$('stb').textContent=T('stg');
+const g=$('opt');g.style.display=optOpen?'block':'none';g.innerHTML='';
+if(!optOpen)return;
+const h=document.createElement('div');h.className='oh';h.textContent=T('funh');g.appendChild(h);
+FK.forEach(k=>{
+const r=document.createElement('div'),n=document.createElement('span'),b=document.createElement('button');
+r.className='gr';n.textContent=T(k[1]);b.textContent=FUN[k[0]]?T('fon'):T('foff');b.style.background=FUN[k[0]]?'#16a34a':'#475569';
+b.onclick=()=>{FUN[k[0]]=FUN[k[0]]?0:1;SV.fun=FUN;save();applyFun();renderOpt();};
+r.appendChild(n);r.appendChild(b);g.appendChild(r);
+});
+const all=document.createElement('button');all.textContent=T('o_all');
+all.onclick=()=>{const v=FK.every(k=>FUN[k[0]])?0:1;FK.forEach(k=>{FUN[k[0]]=v;});SV.fun=FUN;save();applyFun();renderOpt();};
+g.appendChild(all);
+}
+function wireFun(){bind('tb','tb');$('sb').onclick=bomb;$('stb').onclick=()=>{optOpen=!optOpen;renderOpt();};applyFun();renderOpt();}
+
 /* ---------- কন্ট্রোল ---------- */
-const inp={l:0,r:0,g:0,b:0,h:0,rv:0};
+const inp={l:0,r:0,g:0,b:0,h:0,rv:0,tb:0};
 function bind(id,k){
 const e=$(id);
 e.addEventListener('pointerdown',ev=>{ev.preventDefault();inp[k]=1;e.classList.add('on');});
@@ -731,7 +850,8 @@ window.addEventListener('resize',()=>{renderer.setSize(window.innerWidth,window.
 function applyLang(){
 document.documentElement.lang=lang;
 document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=T(e.dataset.i);});
-$('lang').textContent=$('lg').textContent=T('en');$('am').textContent=T(auto?'auto':'man');
+$('lang').textContent=$('lg').textContent=T('en');renderOpt();$('am').textContent=T(auto?'auto':'man');
+const tl=$('tutl');tl.innerHTML='';for(let q=1;q<=7;q++){const li2=document.createElement('li');li2.textContent=T('t'+q);tl.appendChild(li2);}
 $('cam').textContent='📷 '+T(camMode==='in'?'ci':'co');
 const rl=$('rl');rl.innerHTML='';
 routes.forEach((r,i)=>{const b=document.createElement('button');b.textContent=r.a[li()]+' → '+r.b[li()]+'  ('+r.km+' '+T('left')+')';b.onclick=()=>startRoute(i);rl.appendChild(b);});
@@ -747,11 +867,15 @@ LIV.forEach((l,i)=>{const b=document.createElement('button');b.style.background=
 function finishTrip(){
 state='end';audioHush();
 const par=LEN/(veh==='bike'?20:15),late=tm>par*2?2:(tm>par*1.5?1:0);
-const stars=Math.max(1,5-late-Math.min(3,hits)-Math.min(2,missed)-Math.min(2,viol));
-const bonus=stars*cur.km*(veh==='bike'?3:8),net=Math.round(cash+bonus);
+const avgS=satN?satSum/satN:100;
+const stars=Math.max(1,5-late-Math.min(3,hits)-Math.min(2,missed)-Math.min(2,viol)-(avgS<35?2:(avgS<60?1:0)));
+const bonus=stars*cur.km*(veh==='bike'?3:8),tips=(veh==='bus')?Math.round(avgS/100*carried*6):0,net=Math.round(cash+bonus+tips);
 SV.w=Math.max(0,SV.w+net);SV.trips++;SV.stars=Math.max(SV.stars,stars);save();
 const m=Math.floor(tm/60),sc=Math.round(tm%60);
-showMenu(T('arr')+'\n'+'★'.repeat(stars)+'☆'.repeat(5-stars)+'  ('+T('rating')+')\n'+T('time')+': '+m+':'+String(sc).padStart(2,'0')+'  ·  '+(veh==='bike'?T('parc'):T('pax'))+': '+carried+'  ·  '+T('hits')+': '+hits+'  ·  🚦 '+viol+'\n'+T('cash')+': '+Math.round(cash)+'  +  '+T('bonus')+': '+bonus+'  =  '+net+'\n\n'+T('fb'));$('tg').classList.add('hot');
+showMenu(T('arr')+'\n'+'★'.repeat(stars)+'☆'.repeat(5-stars)+'  ('+T('rating')+')\n'+T('time')+': '+m+':'+String(sc).padStart(2,'0')+'  ·  '+(veh==='bike'?T('parc'):T('pax'))+': '+carried+'  ·  '+T('hits')+': '+hits+'  ·  🚦 '+viol+'\n'+T('cash')+': '+Math.round(cash)+'  +  '+T('bonus')+': '+bonus+(tips?'  +  '+T('tips')+': '+tips:'')+'  =  '+net+'\n😊 '+T('sat')+': '+Math.round(avgS)+'%\n\n'+T('fb'));$('tg').classList.add('hot');
+const rt=cur.a[li()]+' → '+cur.b[li()];
+shareTxt=(lang==='bn'?'🚌 আমি '+rt+' রুটে '+stars+' ⭐ পেয়েছি!':'🚌 I got '+stars+' ⭐ on '+rt+'!')+' ('+m+':'+String(sc).padStart(2,'0')+', 😊'+Math.round(avgS)+'%) '+(lang==='bn'?'তুমিও খেলে দেখো:':'Try it yourself:');
+$('sh').style.display='block';gc('finish/'+(cur.a[1]+'-'+cur.b[1]));
 }
 function renderGarage(){
 $('wl').textContent='💰 '+T('wallet')+': '+Math.round(SV.w)+' '+T('cash')+'  ·  '+T('trips')+': '+SV.trips+'  ·  ⭐ '+SV.stars;
@@ -770,21 +894,38 @@ r.onclick=()=>{if(Date.now()-rstT<3000){SV={w:0,u:{e:0,f:0,t:0,s:0},trips:0,star
 g.appendChild(r);
 }
 $('gb').onclick=()=>{garOpen=!garOpen;renderGarage();};
-function showMenu(msg){renderGarage();$('act').style.display='none';$('emg').style.display='none';$('sum').textContent=msg||T('pick');$('menu').style.display='block';}
+function showMenu(msg){$('pg').style.display='none';if(!msg)$('sh').style.display='none';renderGarage();$('act').style.display='none';$('emg').style.display='none';$('sum').textContent=msg||T('pick');$('menu').style.display='block';}
 let speed=0,steer=0,fuel=70,cash=0,pax=0,hits=0,hitCd=0,shake=0,tm=0,lowWarn=false,fc=0;
 let job=null,curKind=null,curStop=null,wasPad=false,carried=0,gear=1,auto=false,shiftT=0,lastHint=-9;
+let sat=100,lastHits=0,lastViol=0,lastMissed=0,satSum=0,satN=0,shareTxt='';
+const GAME_URL='https://socialplatformbd.github.io/bd-drive-sim/',GC_CODE=(window.BD_CFG&&window.BD_CFG.goat)||'';
+function gc(p){try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:p,title:p,event:true});}catch(e){}}
+if(GC_CODE){try{const gs=document.createElement('script');gs.async=true;gs.setAttribute('data-goatcounter','https://'+GC_CODE+'.goatcounter.com/count');gs.src='https://gc.zgo.at/count.js';document.head.appendChild(gs);}catch(e){}}
+function buildPg(){
+const bar=$('pg');bar.querySelectorAll('.pd').forEach(e=>e.remove());
+cur.pts.forEach(p=>{const d=document.createElement('i');d.className='pd'+(p.t==='S'?' s':'');d.style.left=(p.k/cur.km*100)+'%';bar.insertBefore(d,$('pgm'));});
+}
+function showTut(){$('tut').style.display='flex';}
+$('tutok').onclick=()=>{$('tut').style.display='none';if(state==='tut')state='play';};
+$('hlp').onclick=showTut;
+$('sh').onclick=()=>{
+const txt=shareTxt;
+if(navigator.share){navigator.share({text:txt,url:GAME_URL}).catch(()=>{});}
+else{try{navigator.clipboard.writeText(txt+' '+GAME_URL);say(T('copied'),2500);}catch(e){window.open('https://t.me/share/url?url='+encodeURIComponent(GAME_URL)+'&text='+encodeURIComponent(txt),'_blank');}}
+};
 function startRoute(i){
 audioInit();
 cur=routes[i];buildRoute(cur);trMode=cur.st.tr;
 for(const o of scen){o.position.z=o.userData.z0;skin(o);}
 hour=startHour;rainM.visible=(weather==='rain');
 if(veh==='bike'){stops[0].done=true;stops[0].people.forEach(q=>{q.visible=false;});locals.forEach(l=>l.people.forEach(q=>{q.visible=false;}));}
-P.position.set(-8,0,0);P.rotation.y=0;speed=0;steer=0;fuel=70;cash=0;pax=0;hits=0;tm=0;lowWarn=false;job=null;carried=0;wasPad=false;gear=1;rpm=0;shiftT=0;lastHint=-9;missed=0;viol=0;pz0=0;bell.on=false;bellT=15+Math.random()*15;GV0=veh==='bike'?GVK:GVB;GA0=veh==='bike'?GAK:GAB;GV=GV0.map(v=>v*(1+.05*SV.u.e));GA=GA0.map(a=>a*(1+.12*SV.u.e));
+P.position.set(-8,0,0);P.rotation.y=0;speed=0;steer=0;fuel=70;cash=0;pax=0;hits=0;tm=0;lowWarn=false;job=null;carried=0;wasPad=false;gear=1;rpm=0;shiftT=0;lastHint=-9;missed=0;viol=0;pz0=0;sat=100;lastHits=0;lastViol=0;lastMissed=0;satSum=0;satN=0;shareTxt='';$('sh').style.display='none';buildPg();bell.on=false;bellT=15+Math.random()*15;GV0=veh==='bike'?GVK:GVB;GA0=veh==='bike'?GAK:GAB;GV=GV0.map(v=>v*(1+.05*SV.u.e));GA=GA0.map(a=>a*(1+.12*SV.u.e));
 setBus();
 traffic.forEach((v,k)=>{const u=v.userData;v.position.set(u.bx,0,trMode==='jam'?-40-k*18:-70-k*28);u.cur=u.sp*(trMode==='jam'?.7:1);u.yl=0;rollV(v);});
 ground.material.color.set(GC[biomeAt(0)]);envUpdate(0);applyGfx();
 $('tg').classList.remove('hot');
-$('menu').style.display='none';state='play';
+$('menu').style.display='none';state='play';$('pg').style.display='block';gc('start/'+(cur.a[1]+'-'+cur.b[1]));funStart();
+if(!SV.tut){SV.tut=1;save();showTut();state='tut';}
 say(T('hint'),5000);
 }
 
@@ -808,6 +949,7 @@ speed+=GA[gear]*(ra<.2?.35+ra*2:(ra<.85?1:Math.max(0,1-(ra-.85)*6.67)))*dt;
 else if(thr&&speed<0)speed+=14*dt;
 else speed-=sg*(on?(gear>=1?2.4:1.1):3.5)*dt;
 if(gear>=1&&speed>GV[gear]*1.05)speed-=3*dt;
+funPhys(dt,on);funTick(dt);
 if(inp.b)speed-=sg*18*(1+.12*SV.u.t)*(weather==='rain'?.7+.05*SV.u.t:1)*dt;
 const px=P.position.x,pz=P.position.z;
 let pad=false,ps=null,fz=false,lp=null;
@@ -888,6 +1030,7 @@ const zz=P.position.z,xx=P.position.x;
 sigUpdate();
 for(let i=0;i<traffic.length;i++){
 const t=traffic[i],u=t.userData;
+if(u.hop>0){u.hop-=dt;t.position.y=Math.abs(Math.sin(u.hop*9))*1.3;}else if(t.position.y)t.position.y=0;
 if(u.dir<0){
 let cap=u.sp;
 for(let j=0;j<traffic.length;j++){
@@ -936,6 +1079,17 @@ if(!wait){c.position.x+=u.d*u.sp*dt;if(Math.abs(c.position.x)>75)c.position.x=-u
 if(hitCd<=0&&Math.abs(c.position.x-xx)<(u.l+PW)/2&&Math.abs(c.position.z-zz)<(u.w+PL)/2){speed*=.2;hits++;hitCd=1.2;shake=.4;c.position.x+=u.d*3;say(T('hit'),1200);}
 }
 
+/* যাত্রী সন্তুষ্টি */
+if(hits!==lastHits){sat-=12*(hits-lastHits);lastHits=hits;}
+if(viol!==lastViol){sat-=8*(viol-lastViol);lastViol=viol;}
+if(missed!==lastMissed){sat-=8*(missed-lastMissed);lastMissed=missed;}
+let pen=0;
+if(inp.b&&speed>8)pen+=7;
+if(Math.abs(steer)>.6&&speed>18)pen+=4;
+if(fuel<=0)pen+=2;
+sat=Math.max(0,Math.min(100,sat+(pen?-pen*dt:1.2*dt)));
+satSum+=sat*dt;satN+=dt;
+
 /* দৃশ্য ঘুরানো */
 ground.position.z=road.position.z=edgeL.position.z=edgeR.position.z=zz;
 for(const d of dashes)if(d.position.z>zz+20)d.position.z-=360;
@@ -964,12 +1118,14 @@ sound(on,thr);
 /* HUD */
 fc++;
 if(fc%6===0){
+{const pr=Math.max(0,Math.min(1,-zz/LEN));$('pgf').style.width=(pr*100)+'%';$('pgm').style.left=(pr*100)+'%';}
+funHud();
 $('gn').textContent=(inp.rv&&speed<=.3)?'R':(gear||'N');
 $('gr').textContent=T('gear')+' '+$('gn').textContent+'  ·  '+(Math.round(rpm*(veh==='bike'?3.2:1)/10)*10)+' RPM  ·  🕒 '+String(Math.floor(hour)).padStart(2,'0')+':'+String(Math.floor(hour%1*60)).padStart(2,'0');
 $('spd').textContent=(speed<-.1?'R ':'')+Math.round(Math.abs(speed)*3.6);
 $('fi').style.width=fuel+'%';$('fi').style.background=fuel<15?'#ef4444':'#22c55e';
 const nx=stops.find(s=>!s.done);
-$('st').textContent=T('fuel')+' '+Math.round(fuel)+'%  ·  '+T('cash')+' '+Math.round(cash)+'  ·  '+(veh==='bike'?T('parc')+' '+carried:T('pax')+' '+pax+'/'+CAP());
+$('st').textContent=T('fuel')+' '+Math.round(fuel)+'%  ·  '+T('cash')+' '+Math.round(cash)+'  ·  '+(veh==='bike'?T('parc')+' '+carried:T('pax')+' '+pax+'/'+CAP())+'  ·  '+(sat>=70?'😊':(sat>=40?'😐':'😠'))+Math.round(sat)+'%';
 const nf=fuels.find(z=>z<zz+10);
 const np=ptz[ptI];
 $('rt').textContent=(np?'📍 '+(np.t==='S'||np.t==='L'?'🚏 ':'')+(lang==='bn'?np.bn:np.en)+' (~'+Math.max(0,Math.round(Math.abs(zz-np.z)*SC/1000))+' '+T('left')+')':'')+(nf!==undefined?'\n'+T('fst')+': '+Math.round(Math.abs(zz-nf)*SC/1000)+' '+T('left'):'')+(bell.on?'\n🔔 '+T('bellq')+': '+bell.stop.nm[li()]+' ('+(Math.abs(zz-bell.stop.z)*SC/1000).toFixed(1)+' '+T('left')+')':'');
@@ -977,6 +1133,7 @@ $('rt').textContent=(np?'📍 '+(np.t==='S'||np.t==='L'?'🚏 ':'')+(lang==='bn'
 }
 function audioHush(){if(en)en.g.gain.value=0;if(hornO)hornO.gain.value=0;}
 
+wireFun();
 applyLang();showMenu('');
 if(!SV.seen){SV.seen=1;save();say(T('hello'),8000);}
 let last=performance.now(),T1=0,chk=0,fAcc=0,fN=0;
@@ -988,7 +1145,7 @@ if(ps.some(p=>p.diagnostics&&p.diagnostics.runnable===false)){bendOff=true;bentM
 function loop(now){
 const dt=Math.min(.05,(now-last)/1000);last=now;T1+=dt;
 if(state==='play')update(dt,T1);
-else if(state==='end'||state==='menu')audioHush();
+else if(state==='end'||state==='menu'||state==='tut')audioHush();
 if(state==='play'&&tm>4){fAcc+=dt;if(++fN>=150){if(fN/fAcc<24&&gi>0)setGfx(gi-1,true);fN=0;fAcc=0;}}
 renderer.render(scene,camera);
 if(++chk===8||chk===90)checkShaders();
